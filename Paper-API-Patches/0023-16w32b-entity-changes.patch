@@ -1,0 +1,1016 @@
+From 0fb1ce6d1882cf06c698d37c1c430ee2863308e2 Mon Sep 17 00:00:00 2001
+From: Momo <momo@momoperes.ca>
+Date: Thu, 11 Aug 2016 20:45:29 -0400
+Subject: [PATCH] 16w32b entity changes
+
+
+diff --git a/pom.xml b/pom.xml
+index 7496b3d..66abfcd 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -13,7 +13,7 @@
+ 
+     <groupId>net.glowstone</groupId>
+     <artifactId>glowkit</artifactId>
+-    <version>1.10.2-R0.1-SNAPSHOT</version>
++    <version>1.11-16w32b-R0.1-SNAPSHOT</version>
+     <packaging>jar</packaging>
+ 
+     <name>Glowkit</name>
+diff --git a/src/main/java/org/bukkit/entity/AbstractHorse.java b/src/main/java/org/bukkit/entity/AbstractHorse.java
+new file mode 100644
+index 0000000..a595caa
+--- /dev/null
++++ b/src/main/java/org/bukkit/entity/AbstractHorse.java
+@@ -0,0 +1,198 @@
++package org.bukkit.entity;
++
++import org.bukkit.inventory.HorseInventory;
++import org.bukkit.inventory.InventoryHolder;
++
++/**
++ * Represents a Horse.
++ */
++public interface AbstractHorse extends Animals, Vehicle, Tameable {
++
++    interface Horse extends AbstractHorse {
++
++        /**
++         * Represents the base color that the horse has.
++         */
++        public enum Color {
++            /**
++             * Snow white
++             */
++            WHITE,
++            /**
++             * Very light brown
++             */
++            CREAMY,
++            /**
++             * Chestnut
++             */
++            CHESTNUT,
++            /**
++             * Light brown
++             */
++            BROWN,
++            /**
++             * Pitch black
++             */
++            BLACK,
++            /**
++             * Gray
++             */
++            GRAY,
++            /**
++             * Dark brown
++             */
++            DARK_BROWN,
++            ;
++        }
++
++        /**
++         * Represents the style, or markings, that the horse has.
++         */
++        public enum Style {
++            /**
++             * No markings
++             */
++            NONE,
++            /**
++             * White socks or stripes
++             */
++            WHITE,
++            /**
++             * Milky splotches
++             */
++            WHITEFIELD,
++            /**
++             * Round white dots
++             */
++            WHITE_DOTS,
++            /**
++             * Small black dots
++             */
++            BLACK_DOTS,
++            ;
++        }
++
++        /**
++         * Gets the horse's color.
++         * <p>
++         * Colors only apply to horses, not to donkeys, mules, skeleton horses
++         * or undead horses.
++         *
++         * @return a {@link Color} representing the horse's group
++         */
++        public Color getColor();
++
++        /**
++         * Sets the horse's color.
++         * <p>
++         * Attempting to set a color for any donkey, mule, skeleton horse or
++         * undead horse will not result in a change.
++         *
++         * @param color a {@link Color} for this horse
++         */
++        public void setColor(Color color);
++
++        /**
++         * Gets the horse's style.
++         * Styles determine what kind of markings or patterns a horse has.
++         * <p>
++         * Styles only apply to horses, not to donkeys, mules, skeleton horses
++         * or undead horses.
++         *
++         * @return a {@link Style} representing the horse's style
++         */
++        public Style getStyle();
++
++        /**
++         * Sets the style of this horse.
++         * Styles determine what kind of markings or patterns a horse has.
++         * <p>
++         * Attempting to set a style for any donkey, mule, skeleton horse or
++         * undead horse will not result in a change.
++         *
++         * @param style a {@link Style} for this horse
++         */
++        public void setStyle(Style style);
++
++        /**
++         * Gets the domestication level of this horse.
++         * <p>
++         * A higher domestication level indicates that the horse is closer to
++         * becoming tame. As the domestication level gets closer to the max
++         * domestication level, the chance of the horse becoming tame increases.
++         *
++         * @return domestication level
++         */
++        public int getDomestication();
++
++        /**
++         * Sets the domestication level of this horse.
++         * <p>
++         * Setting the domestication level to a high value will increase the
++         * horse's chances of becoming tame.
++         * <p>
++         * Domestication level must be greater than zero and no greater than
++         * the max domestication level of the horse, determined with
++         * {@link #getMaxDomestication()}
++         *
++         * @param level domestication level
++         */
++        public void setDomestication(int level);
++
++        /**
++         * Gets the maximum domestication level of this horse.
++         * <p>
++         * The higher this level is, the longer it will likely take
++         * for the horse to be tamed.
++         *
++         * @return the max domestication level
++         */
++        public int getMaxDomestication();
++
++        /**
++         * Sets the maximum domestication level of this horse.
++         * <p>
++         * Setting a higher max domestication will increase the amount of
++         * domesticating (feeding, riding, etc.) necessary in order to tame it,
++         * while setting a lower max value will have the opposite effect.
++         * <p>
++         * Maximum domestication must be greater than zero.
++         *
++         * @param level the max domestication level
++         */
++        public void setMaxDomestication(int level);
++
++        /**
++         * Gets the jump strength of this horse.
++         * <p>
++         * Jump strength defines how high the horse can jump. A higher jump strength
++         * increases how high a jump will go.
++         *
++         * @return the horse's jump strength
++         */
++        public double getJumpStrength();
++
++        /**
++         * Sets the jump strength of this horse.
++         * <p>
++         * A higher jump strength increases how high a jump will go.
++         * Setting a jump strength to 0 will result in no jump.
++         * You cannot set a jump strength to a value below 0 or
++         * above 2.
++         *
++         * @param strength jump strength for this horse
++         */
++        public void setJumpStrength(double strength);
++    }
++
++    interface ZombieHorse extends AbstractHorse {}
++    interface SkeletonHorse extends AbstractHorse {}
++
++    interface ChestedHorse extends AbstractHorse, InventoryHolder {
++        @Override
++        public HorseInventory getInventory();
++    }
++
++    interface Mule extends ChestedHorse {}
++    interface Donkey extends ChestedHorse {}
++}
+diff --git a/src/main/java/org/bukkit/entity/EntityType.java b/src/main/java/org/bukkit/entity/EntityType.java
+index 028e1f2..825cbed 100644
+--- a/src/main/java/org/bukkit/entity/EntityType.java
++++ b/src/main/java/org/bukkit/entity/EntityType.java
+@@ -3,6 +3,7 @@ package org.bukkit.entity;
+ import java.util.HashMap;
+ import java.util.Map;
+ 
++import com.sun.istack.internal.Nullable;
+ import org.bukkit.entity.minecart.CommandMinecart;
+ import org.bukkit.entity.minecart.HopperMinecart;
+ import org.bukkit.entity.minecart.SpawnerMinecart;
+@@ -24,193 +25,203 @@ public enum EntityType {
+      * Spawn with {@link World#dropItem(Location, ItemStack)} or {@link
+      * World#dropItemNaturally(Location, ItemStack)}
+      */
+-    DROPPED_ITEM("Item", Item.class, 1, false),
++    DROPPED_ITEM(Type.OBJECT, "Item", Item.class, "minecraft:item", 1, false),
+     /**
+      * An experience orb.
+      */
+-    EXPERIENCE_ORB("XPOrb", ExperienceOrb.class, 2),
++    EXPERIENCE_ORB(Type.OBJECT, "XPOrb", ExperienceOrb.class, "minecraft:xp_orb", 2),
++    AREA_EFFECT_CLOUD(Type.OBJECT, "AreaEffectCloud", AreaEffectCloud.class, "minecraft:area_effect_cloud", 3),
++    ELDER_GUARDIAN(Type.MOB, "ElderGuardian", Guardian.ElderGuardian.class, "minecraft:elder_guardian", 4),
++    WITHER_SKELETON(Type.MOB, "WitherSkeleton", Skeleton.WitherSkeleton.class, "minecraft:wither_skeleton", 5),
++    STRAY(Type.MOB, "Stray", Skeleton.Stray.class, "minecraft:stray", 6),
+     /**
+      * A leash attached to a fencepost.
+      */
+-    LEASH_HITCH("LeashKnot", LeashHitch.class, 8),
++    LEASH_HITCH(Type.OBJECT, "LeashKnot", LeashHitch.class, "minecraft:leash_knot", 8),
+     /**
+      * A painting on a wall.
+      */
+-    PAINTING("Painting", Painting.class, 9),
++    PAINTING(Type.OBJECT, "Painting", Painting.class, "minecraft:painting", 9),
+     /**
+      * An arrow projectile; may get stuck in the ground.
+      */
+-    ARROW("Arrow", Arrow.class, 10),
++    ARROW(Type.OBJECT, "Arrow", Arrow.class, "minecraft:arrow", 10),
+     /**
+      * A flying snowball.
+      */
+-    SNOWBALL("Snowball", Snowball.class, 11),
++    SNOWBALL(Type.OBJECT, "Snowball", Snowball.class, "minecraft:snowball", 11),
+     /**
+      * A flying large fireball, as thrown by a Ghast for example.
+      */
+-    FIREBALL("Fireball", LargeFireball.class, 12),
++    FIREBALL(Type.OBJECT, "Fireball", LargeFireball.class, "minecraft:fireball", 12),
+     /**
+      * A flying small fireball, such as thrown by a Blaze or player.
+      */
+-    SMALL_FIREBALL("SmallFireball", SmallFireball.class, 13),
++    SMALL_FIREBALL(Type.OBJECT, "SmallFireball", SmallFireball.class, "minecraft:small_fireball", 13),
+     /**
+      * A flying ender pearl.
+      */
+-    ENDER_PEARL("ThrownEnderpearl", EnderPearl.class, 14),
++    ENDER_PEARL(Type.OBJECT, "ThrownEnderpearl", EnderPearl.class, "minecraft:ender_pearl", 14),
+     /**
+      * An ender eye signal.
+      */
+-    ENDER_SIGNAL("EyeOfEnderSignal", EnderSignal.class, 15),
++    ENDER_SIGNAL(Type.OBJECT, "EyeOfEnderSignal", EnderSignal.class, "minecraft:eye_of_ender_signal", 15),
+     /**
+      * A flying experience bottle.
+      */
+-    THROWN_EXP_BOTTLE("ThrownExpBottle", ThrownExpBottle.class, 17),
++    THROWN_EXP_BOTTLE(Type.OBJECT, "ThrownExpBottle", ThrownExpBottle.class, "minecraft:xp_bottle", 17),
+     /**
+      * An item frame on a wall.
+      */
+-    ITEM_FRAME("ItemFrame", ItemFrame.class, 18),
++    ITEM_FRAME(Type.OBJECT, "ItemFrame", ItemFrame.class, "minecraft:item_frame", 18),
+     /**
+      * A flying wither skull projectile.
+      */
+-    WITHER_SKULL("WitherSkull", WitherSkull.class, 19),
++    WITHER_SKULL(Type.OBJECT, "WitherSkull", WitherSkull.class, "minecraft:wither_skull", 19),
+     /**
+      * Primed TNT that is about to explode.
+      */
+-    PRIMED_TNT("PrimedTnt", TNTPrimed.class, 20),
++    PRIMED_TNT(Type.OBJECT, "PrimedTnt", TNTPrimed.class, "minecraft:tnt", 20),
+     /**
+      * A block that is going to or is about to fall.
+      */
+-    FALLING_BLOCK("FallingSand", FallingBlock.class, 21, false),
++    FALLING_BLOCK(Type.OBJECT, "FallingSand", FallingBlock.class, "minecraft:falling_block", 21, false),
+     /**
+      * Internal representation of a Firework once it has been launched.
+      */
+-    FIREWORK("FireworksRocketEntity", Firework.class, 22, false),
++    FIREWORK(Type.OBJECT, "FireworksRocketEntity", Firework.class, "minecraft:fireworks_rocket", 22, false),
++    HUSK(Type.MOB, "Husk", Zombie.Husk.class, "minecraft:husk", 23),
+     /**
+-     * Like {@link #ARROW} but tipped with a specific potion which is applied on contact.
++     * Causes the {@link PotionEffectType#GLOWING} effect on all team members.
+      */
+-    TIPPED_ARROW("TippedArrow", TippedArrow.class, 23),
+-    /**
+-     * Like {@link #TIPPED_ARROW} but causes the {@link PotionEffectType#GLOWING} effect on all team members.
+-     */
+-    SPECTRAL_ARROW("SpectralArrow", SpectralArrow.class, 24),
++    SPECTRAL_ARROW(Type.OBJECT, "SpectralArrow", SpectralArrow.class, "minecraft:spectral_arrow", 24),
+     /**
+      * Bullet fired by {@link #SHULKER}.
+      */
+-    SHULKER_BULLET("ShulkerBullet", ShulkerBullet.class, 25),
++    SHULKER_BULLET(Type.OBJECT, "ShulkerBullet", ShulkerBullet.class, "minecraft:shulker_bullet", 25),
+     /**
+      * Like {@link #FIREBALL} but with added effects.
+      */
+-    DRAGON_FIREBALL("DragonFireball", DragonFireball.class, 26),
++    DRAGON_FIREBALL(Type.OBJECT, "DragonFireball", DragonFireball.class, "minecraft:dragon_fireball", 26),
++    ZOMBIE_VILLAGER(Type.MOB, "ZombieVillager", Zombie.ZombieVillager.class, "minecraft:zombie_villager", 27),
++    SKELETON_HORSE(Type.MOB, "SkeletonHorse", AbstractHorse.SkeletonHorse.class, "minecraft:skeleton_horse", 28),
++    ZOMBIE_HORSE(Type.MOB, "ZombieHorse", AbstractHorse.ZombieHorse.class, "minecraft:zombie_horse", 29),
++    DONKEY(Type.MOB, "Donkey", AbstractHorse.Donkey.class, "minecraft:donkey", 31),
++    MULE(Type.MOB, "Mule", AbstractHorse.Mule.class, "minecraft:mule", 32),
++
+     /**
+      * Mechanical entity with an inventory for placing weapons / armor into.
+      */
+-    ARMOR_STAND("ArmorStand", ArmorStand.class, 30),
++    ARMOR_STAND(Type.OBJECT, "ArmorStand", ArmorStand.class, "minecraft:armor_stand", 30),
+     /**
+      * @see CommandMinecart
+      */
+-    MINECART_COMMAND("MinecartCommandBlock", CommandMinecart.class, 40),
++    MINECART_COMMAND(Type.OBJECT, "MinecartCommandBlock", CommandMinecart.class, "minecraft:commandblock_minecart", 40),
+     /**
+      * A placed boat.
+      */
+-    BOAT("Boat", Boat.class, 41),
++    BOAT(Type.OBJECT, "Boat", Boat.class, "minecraft:boat", 41),
+     /**
+      * @see RideableMinecart
+      */
+-    MINECART("MinecartRideable", RideableMinecart.class, 42),
++    MINECART(Type.OBJECT, "MinecartRideable", RideableMinecart.class, "minecraft:minecart", 42),
+     /**
+      * @see StorageMinecart
+      */
+-    MINECART_CHEST("MinecartChest", StorageMinecart.class, 43),
++    MINECART_CHEST(Type.OBJECT, "MinecartChest", StorageMinecart.class, "minecraft:chest_minecart", 43),
+     /**
+      * @see PoweredMinecart
+      */
+-    MINECART_FURNACE("MinecartFurnace", PoweredMinecart.class, 44),
++    MINECART_FURNACE(Type.OBJECT, "MinecartFurnace", PoweredMinecart.class, "minecraft:furnace_minecart", 44),
+     /**
+      * @see ExplosiveMinecart
+      */
+-    MINECART_TNT("MinecartTNT", ExplosiveMinecart.class, 45),
++    MINECART_TNT(Type.OBJECT, "MinecartTNT", ExplosiveMinecart.class, "minecraft:tnt_minecart", 45),
+     /**
+      * @see HopperMinecart
+      */
+-    MINECART_HOPPER("MinecartHopper", HopperMinecart.class, 46),
++    MINECART_HOPPER(Type.OBJECT, "MinecartHopper", HopperMinecart.class, "minecraft:hopper_minecart", 46),
+     /**
+      * @see SpawnerMinecart
+      */
+-    MINECART_MOB_SPAWNER("MinecartMobSpawner", SpawnerMinecart.class, 47),
+-    CREEPER("Creeper", Creeper.class, 50),
+-    SKELETON("Skeleton", Skeleton.class, 51),
+-    SPIDER("Spider", Spider.class, 52),
+-    GIANT("Giant", Giant.class, 53),
+-    ZOMBIE("Zombie", Zombie.class, 54),
+-    SLIME("Slime", Slime.class, 55),
+-    GHAST("Ghast", Ghast.class, 56),
+-    PIG_ZOMBIE("PigZombie", PigZombie.class, 57),
+-    ENDERMAN("Enderman", Enderman.class, 58),
+-    CAVE_SPIDER("CaveSpider", CaveSpider.class, 59),
+-    SILVERFISH("Silverfish", Silverfish.class, 60),
+-    BLAZE("Blaze", Blaze.class, 61),
+-    MAGMA_CUBE("LavaSlime", MagmaCube.class, 62),
+-    ENDER_DRAGON("EnderDragon", EnderDragon.class, 63),
+-    WITHER("WitherBoss", Wither.class, 64),
+-    BAT("Bat", Bat.class, 65),
+-    WITCH("Witch", Witch.class, 66),
+-    ENDERMITE("Endermite", Endermite.class, 67),
+-    GUARDIAN("Guardian", Guardian.class, 68),
+-    SHULKER("Shulker", Shulker.class, 69),
+-    PIG("Pig", Pig.class, 90),
+-    SHEEP("Sheep", Sheep.class, 91),
+-    COW("Cow", Cow.class, 92),
+-    CHICKEN("Chicken", Chicken.class, 93),
+-    SQUID("Squid", Squid.class, 94),
+-    WOLF("Wolf", Wolf.class, 95),
+-    MUSHROOM_COW("MushroomCow", MushroomCow.class, 96),
+-    SNOWMAN("SnowMan", Snowman.class, 97),
+-    OCELOT("Ozelot", Ocelot.class, 98),
+-    IRON_GOLEM("VillagerGolem", IronGolem.class, 99),
+-    HORSE("EntityHorse", Horse.class, 100),
+-    RABBIT("Rabbit", Rabbit.class, 101),
+-    POLAR_BEAR("PolarBear", PolarBear.class, 102),
+-    VILLAGER("Villager", Villager.class, 120),
+-    ENDER_CRYSTAL("EnderCrystal", EnderCrystal.class, 200),
++    MINECART_MOB_SPAWNER(Type.OBJECT, "MinecartMobSpawner", SpawnerMinecart.class, "minecraft:spawner_minecart", 47),
++    CREEPER(Type.MOB, "Creeper", Creeper.class, "minecraft:creeper", 50),
++    SKELETON(Type.MOB, "Skeleton", Skeleton.class, "minecraft:skeleton", 51),
++    SPIDER(Type.MOB, "Spider", Spider.class, "minecraft:spider", 52),
++    GIANT(null, "Giant", Giant.class, "minecraft:giant", 53),
++    ZOMBIE(Type.MOB, "Zombie", Zombie.class, "minecraft:zombie", 54),
++    SLIME(Type.MOB, "Slime", Slime.class, "minecraft:slime", 55),
++    GHAST(Type.MOB, "Ghast", Ghast.class, "minecraft:ghast", 56),
++    PIG_ZOMBIE(Type.MOB, "PigZombie", PigZombie.class, "minecraft:zombie_pigman", 57),
++    ENDERMAN(Type.MOB, "Enderman", Enderman.class, "minecraft:enderman", 58),
++    CAVE_SPIDER(Type.MOB, "CaveSpider", CaveSpider.class, "minecraft:cave_spider", 59),
++    SILVERFISH(Type.MOB, "Silverfish", Silverfish.class, "minecraft:silverfish", 60),
++    BLAZE(Type.MOB, "Blaze", Blaze.class, "minecraft:blaze", 61),
++    MAGMA_CUBE(Type.MOB, "LavaSlime", MagmaCube.class, "minecraft:magma_cube", 62),
++    ENDER_DRAGON(null, "EnderDragon", EnderDragon.class, "minecraft:ender_dragon", 63),
++    WITHER(null, "WitherBoss", Wither.class, "minecraft:wither", 64),
++    BAT(Type.MOB, "Bat", Bat.class, "minecraft:bat", 65),
++    WITCH(Type.MOB, "Witch", Witch.class, "minecraft:witch", 66),
++    ENDERMITE(Type.MOB, "Endermite", Endermite.class, "minecraft:endermite", 67),
++    GUARDIAN(Type.MOB, "Guardian", Guardian.class, "minecraft:guardian", 68),
++    SHULKER(Type.MOB, "Shulker", Shulker.class, "minecraft:shulker", 69),
++    PIG(Type.MOB, "Pig", Pig.class, "minecraft:pig", 90),
++    SHEEP(Type.MOB, "Sheep", Sheep.class, "minecraft:sheep", 91),
++    COW(Type.MOB, "Cow", Cow.class, "minecraft:cow", 92),
++    CHICKEN(Type.MOB, "Chicken", Chicken.class, "minecraft:chicken", 93),
++    SQUID(Type.MOB, "Squid", Squid.class, "minecraft:squid", 94),
++    WOLF(Type.MOB, "Wolf", Wolf.class, "minecraft:wolf", 95),
++    MUSHROOM_COW(Type.MOB, "MushroomCow", MushroomCow.class, "minecraft:mooshroom", 96),
++    SNOWMAN(null, "SnowMan", Snowman.class, "minecraft:snowman", 97),
++    OCELOT(Type.MOB, "Ozelot", Ocelot.class, "minecraft:ocelot", 98),
++    IRON_GOLEM(null, "VillagerGolem", IronGolem.class, "minecraft:villager_golem", 99),
++    HORSE(Type.MOB, "Horse", AbstractHorse.Horse.class, "minecraft:horse", 100),
++    RABBIT(Type.MOB, "Rabbit", Rabbit.class, "minecraft:rabbit", 101),
++    POLAR_BEAR(Type.MOB, "PolarBear", PolarBear.class, "minecraft:polar_bear", 102),
++    VILLAGER(Type.MOB, "Villager", Villager.class, "minecraft:villager", 120),
++    ENDER_CRYSTAL(Type.OBJECT, "EnderCrystal", EnderCrystal.class, "minecraft:ender_crystal", 200),
+     // These don't have an entity ID in nms.EntityTypes.
+     /**
+      * A flying splash potion
+      */
+-    SPLASH_POTION(null, SplashPotion.class, -1, false),
++    SPLASH_POTION(null, null, SplashPotion.class, null, -1, false),
+     /**
+      * A flying lingering potion
+      */
+-    LINGERING_POTION(null, LingeringPotion.class, -1, false),
+-    AREA_EFFECT_CLOUD(null, AreaEffectCloud.class, -1),
++    LINGERING_POTION(null, null, LingeringPotion.class, null, -1, false),
+     /**
+      * A flying chicken egg.
+      */
+-    EGG(null, Egg.class, -1, false),
++    EGG(null, null, Egg.class, null, -1, false),
+     /**
+      * A fishing line and bobber.
+      */
+-    FISHING_HOOK(null, Fish.class, -1, false),
++    FISHING_HOOK(null, null, Fish.class, null, -1, false),
+     /**
+      * A bolt of lightning.
+      * <p>
+      * Spawn with {@link World#strikeLightning(Location)}.
+      */
+-    LIGHTNING(null, LightningStrike.class, -1, false),
+-    WEATHER(null, Weather.class, -1, false),
+-    PLAYER(null, Player.class, -1, false),
+-    COMPLEX_PART(null, ComplexEntityPart.class, -1, false),
++    LIGHTNING(null, null, LightningStrike.class, null, -1, false),
++    WEATHER(null, null, Weather.class, null, -1, false),
++    PLAYER(null, null, Player.class, null, -1, false),
++    COMPLEX_PART(null, null, ComplexEntityPart.class, null, -1, false),
+     /**
+      * An unknown entity without an Entity Class
+      */
+-    UNKNOWN(null, null, -1, false);
++    UNKNOWN(null, null, null, null, -1, false);
+ 
++    private Type type;
+     private String name;
+     private Class<? extends Entity> clazz;
+     private short typeId;
+-    private boolean independent, living;
++    private String id;
++    private boolean independent;
++    private boolean living;
+ 
+     private static final Map<String, EntityType> NAME_MAP = new HashMap<String, EntityType>();
+-    private static final Map<Short, EntityType> ID_MAP = new HashMap<Short, EntityType>();
++    private static final Map<String, EntityType> ID_MAP = new HashMap<String, EntityType>();
++    private static final Map<Short, EntityType> TYPEID_MAP = new HashMap<Short, EntityType>();
+ 
+     static {
+         for (EntityType type : values()) {
+@@ -218,19 +229,24 @@ public enum EntityType {
+                 NAME_MAP.put(type.name.toLowerCase(java.util.Locale.ENGLISH), type);
+             }
+             if (type.typeId > 0) {
+-                ID_MAP.put(type.typeId, type);
++                TYPEID_MAP.put(type.typeId, type);
++            }
++            if (type.id != null) {
++                ID_MAP.put(type.name.toLowerCase(java.util.Locale.ENGLISH), type);
+             }
+         }
+     }
+ 
+-    private EntityType(String name, Class<? extends Entity> clazz, int typeId) {
+-        this(name, clazz, typeId, true);
++    private EntityType(Type type, String name, Class<? extends Entity> clazz, String id, int typeId) {
++        this(type, name, clazz, id, typeId, true);
+     }
+ 
+-    private EntityType(String name, Class<? extends Entity> clazz, int typeId, boolean independent) {
++    private EntityType(Type type, String name, Class<? extends Entity> clazz, String id, int typeId, boolean independent) {
++        this.type = type;
+         this.name = name;
+         this.clazz = clazz;
+         this.typeId = (short) typeId;
++        this.id = id;
+         this.independent = independent;
+         if (clazz != null) {
+             this.living = LivingEntity.class.isAssignableFrom(clazz);
+@@ -238,7 +254,6 @@ public enum EntityType {
+     }
+ 
+     /**
+-     *
+      * @return the entity type's name
+      * @deprecated Magic value
+      */
+@@ -252,8 +267,7 @@ public enum EntityType {
+     }
+ 
+     /**
+-     *
+-     * @return the raw type id 
++     * @return the raw type id
+      * @deprecated Magic value
+      */
+     @Deprecated
+@@ -262,7 +276,20 @@ public enum EntityType {
+     }
+ 
+     /**
+-     *
++     * @return the Minecraft ID
++     */
++    public String getId() {
++        return id;
++    }
++
++    public static EntityType fromId(String id) {
++        if (id == null) {
++            return null;
++        }
++        return ID_MAP.get(id.toLowerCase(java.util.Locale.ENGLISH));
++    }
++
++    /**
+      * @param name the entity type's name
+      * @return the matching entity type or null
+      * @deprecated Magic value
+@@ -276,7 +303,6 @@ public enum EntityType {
+     }
+ 
+     /**
+-     *
+      * @param id the raw type id
+      * @return the matching entity type or null
+      * @deprecated Magic value
+@@ -286,7 +312,7 @@ public enum EntityType {
+         if (id > Short.MAX_VALUE) {
+             return null;
+         }
+-        return ID_MAP.get((short) id);
++        return TYPEID_MAP.get((short) id);
+     }
+ 
+     /**
+@@ -304,4 +330,12 @@ public enum EntityType {
+     public boolean isAlive() {
+         return living;
+     }
++
++    public Type getType() {
++        return type;
++    }
++
++    enum Type {
++        OBJECT, MOB
++    }
+ }
+diff --git a/src/main/java/org/bukkit/entity/Guardian.java b/src/main/java/org/bukkit/entity/Guardian.java
+index 31f3c6a..30587c4 100644
+--- a/src/main/java/org/bukkit/entity/Guardian.java
++++ b/src/main/java/org/bukkit/entity/Guardian.java
+@@ -2,17 +2,5 @@ package org.bukkit.entity;
+ 
+ public interface Guardian extends Monster {
+ 
+-    /**
+-     * Check if the Guardian is an elder Guardian
+-     * 
+-     * @return true if the Guardian is an Elder Guardian, false if not
+-     */
+-    public boolean isElder();
+-
+-    /**
+-     * Set the Guardian to an elder Guardian or not
+-     *
+-     * @param shouldBeElder True if this Guardian should be a elder Guardian, false if not
+-     */
+-    public void setElder(boolean shouldBeElder);
++    interface ElderGuardian extends Guardian {}
+ }
+diff --git a/src/main/java/org/bukkit/entity/Horse.java b/src/main/java/org/bukkit/entity/Horse.java
+deleted file mode 100644
+index e90d318..0000000
+--- a/src/main/java/org/bukkit/entity/Horse.java
++++ /dev/null
+@@ -1,256 +0,0 @@
+-package org.bukkit.entity;
+-
+-import org.bukkit.inventory.HorseInventory;
+-import org.bukkit.inventory.InventoryHolder;
+-
+-/**
+- * Represents a Horse.
+- */
+-public interface Horse extends Animals, Vehicle, InventoryHolder, Tameable {
+-
+-    /**
+-     * Represents the different types of horses that may exist.
+-     */
+-    public enum Variant {
+-        /**
+-         * A normal horse
+-         */
+-        HORSE,
+-        /**
+-         * A donkey
+-         */
+-        DONKEY,
+-        /**
+-         * A mule
+-         */
+-        MULE,
+-        /**
+-         * An undead horse
+-         */
+-        UNDEAD_HORSE,
+-        /**
+-         * A skeleton horse
+-         */
+-        SKELETON_HORSE,
+-        ;
+-    }
+-
+-    /**
+-     * Represents the base color that the horse has.
+-     */
+-    public enum Color {
+-        /**
+-         * Snow white
+-         */
+-        WHITE,
+-        /**
+-         * Very light brown
+-         */
+-        CREAMY,
+-        /**
+-         * Chestnut
+-         */
+-        CHESTNUT,
+-        /**
+-         * Light brown
+-         */
+-        BROWN,
+-        /**
+-         * Pitch black
+-         */
+-        BLACK,
+-        /**
+-         * Gray
+-         */
+-        GRAY,
+-        /**
+-         * Dark brown
+-         */
+-        DARK_BROWN,
+-        ;
+-    }
+-
+-    /**
+-     * Represents the style, or markings, that the horse has.
+-     */
+-    public enum Style {
+-        /**
+-         * No markings
+-         */
+-        NONE,
+-        /**
+-         * White socks or stripes
+-         */
+-        WHITE,
+-        /**
+-         * Milky splotches
+-         */
+-        WHITEFIELD,
+-        /**
+-         * Round white dots
+-         */
+-        WHITE_DOTS,
+-        /**
+-         * Small black dots
+-         */
+-        BLACK_DOTS,
+-        ;
+-    }
+-
+-    /**
+-     * Gets the horse's variant.
+-     * <p>
+-     * A horse's variant defines its physical appearance and capabilities.
+-     * Whether a horse is a regular horse, donkey, mule, or other kind of
+-     * horse is determined using the variant.
+-     *
+-     * @return a {@link Variant} representing the horse's variant
+-     */
+-    public Variant getVariant();
+-
+-    /**
+-     * Sets the horse's variant.
+-     * <p>
+-     * A horse's variant defines its physical appearance and capabilities.
+-     * Whether a horse is a regular horse, donkey, mule, or other kind of
+-     * horse can be set using the variant.
+-     * <p>
+-     * Setting a horse's variant does not change its attributes such as
+-     * its owner and its tamed status, but changing a mule or donkey
+-     * with a chest to another variant which does not support a chest
+-     * will remove the chest and its contents.
+-     *
+-     * @param variant a {@link Variant} for this horse
+-     */
+-    public void setVariant(Variant variant);
+-
+-    /**
+-     * Gets the horse's color.
+-     * <p>
+-     * Colors only apply to horses, not to donkeys, mules, skeleton horses
+-     * or undead horses.
+-     *
+-     * @return a {@link Color} representing the horse's group
+-     */
+-    public Color getColor();
+-
+-    /**
+-     * Sets the horse's color.
+-     * <p>
+-     * Attempting to set a color for any donkey, mule, skeleton horse or
+-     * undead horse will not result in a change.
+-     *
+-     * @param color a {@link Color} for this horse
+-     */
+-    public void setColor(Color color);
+-
+-    /**
+-     * Gets the horse's style.
+-     * Styles determine what kind of markings or patterns a horse has.
+-     * <p>
+-     * Styles only apply to horses, not to donkeys, mules, skeleton horses
+-     * or undead horses.
+-     *
+-     * @return a {@link Style} representing the horse's style
+-     */
+-    public Style getStyle();
+-
+-    /**
+-     * Sets the style of this horse.
+-     * Styles determine what kind of markings or patterns a horse has.
+-     * <p>
+-     * Attempting to set a style for any donkey, mule, skeleton horse or
+-     * undead horse will not result in a change.
+-     *
+-     * @param style a {@link Style} for this horse
+-     */
+-    public void setStyle(Style style);
+-
+-    /**
+-     * Gets whether the horse has a chest equipped.
+-     *
+-     * @return true if the horse has chest storage
+-     */
+-    public boolean isCarryingChest();
+-
+-    /**
+-     * Sets whether the horse has a chest equipped.
+-     * Removing a chest will also clear the chest's inventory.
+-     *
+-     * @param chest true if the horse should have a chest
+-     */
+-    public void setCarryingChest(boolean chest);
+-
+-    /**
+-     * Gets the domestication level of this horse.
+-     * <p>
+-     * A higher domestication level indicates that the horse is closer to
+-     * becoming tame. As the domestication level gets closer to the max
+-     * domestication level, the chance of the horse becoming tame increases.
+-     *
+-     * @return domestication level
+-     */
+-    public int getDomestication();
+-
+-    /**
+-     * Sets the domestication level of this horse.
+-     * <p>
+-     * Setting the domestication level to a high value will increase the
+-     * horse's chances of becoming tame.
+-     * <p>
+-     * Domestication level must be greater than zero and no greater than
+-     * the max domestication level of the horse, determined with
+-     * {@link #getMaxDomestication()}
+-     *
+-     * @param level domestication level
+-     */
+-    public void setDomestication(int level);
+-
+-    /**
+-     * Gets the maximum domestication level of this horse.
+-     * <p>
+-     * The higher this level is, the longer it will likely take
+-     * for the horse to be tamed.
+-     *
+-     * @return the max domestication level
+-     */
+-    public int getMaxDomestication();
+-
+-    /**
+-     * Sets the maximum domestication level of this horse.
+-     * <p>
+-     * Setting a higher max domestication will increase the amount of
+-     * domesticating (feeding, riding, etc.) necessary in order to tame it,
+-     * while setting a lower max value will have the opposite effect.
+-     * <p>
+-     * Maximum domestication must be greater than zero.
+-     *
+-     * @param level the max domestication level
+-     */
+-    public void setMaxDomestication(int level);
+-
+-    /**
+-     * Gets the jump strength of this horse.
+-     * <p>
+-     * Jump strength defines how high the horse can jump. A higher jump strength
+-     * increases how high a jump will go.
+-     *
+-     * @return the horse's jump strength
+-     */
+-    public double getJumpStrength();
+-
+-    /**
+-     * Sets the jump strength of this horse.
+-     * <p>
+-     * A higher jump strength increases how high a jump will go.
+-     * Setting a jump strength to 0 will result in no jump.
+-     * You cannot set a jump strength to a value below 0 or
+-     * above 2.
+-     *
+-     * @param strength jump strength for this horse
+-     */
+-    public void setJumpStrength(double strength);
+-
+-    @Override
+-    public HorseInventory getInventory();
+-}
+diff --git a/src/main/java/org/bukkit/entity/Skeleton.java b/src/main/java/org/bukkit/entity/Skeleton.java
+index bea790e..a280347 100644
+--- a/src/main/java/org/bukkit/entity/Skeleton.java
++++ b/src/main/java/org/bukkit/entity/Skeleton.java
+@@ -5,36 +5,6 @@ package org.bukkit.entity;
+  */
+ public interface Skeleton extends Monster {
+ 
+-    /**
+-     * Gets the current type of this skeleton.
+-     *
+-     * @return Current type
+-     */
+-    public SkeletonType getSkeletonType();
+-
+-    /**
+-     * Sets the new type of this skeleton.
+-     *
+-     * @param type New type
+-     */
+-    public void setSkeletonType(SkeletonType type);
+-
+-    /*
+-     * Represents the various different Skeleton types.
+-     */
+-    public enum SkeletonType {
+-
+-        /**
+-         * Standard skeleton type.
+-         */
+-        NORMAL,
+-        /**
+-         * Wither skeleton. Generally found in Nether fortresses.
+-         */
+-        WITHER,
+-        /**
+-         * Stray skeleton. Generally found in ice biomes. Shoots tipped arrows.
+-         */
+-        STRAY;
+-    }
++    interface Stray extends Skeleton {}
++    interface WitherSkeleton extends Skeleton {}
+ }
+diff --git a/src/main/java/org/bukkit/entity/Zombie.java b/src/main/java/org/bukkit/entity/Zombie.java
+index a897d43..8fe7844 100644
+--- a/src/main/java/org/bukkit/entity/Zombie.java
++++ b/src/main/java/org/bukkit/entity/Zombie.java
+@@ -19,34 +19,22 @@ public interface Zombie extends Monster {
+      */
+     public void setBaby(boolean flag);
+ 
+-    /**
+-     * Gets whether the zombie is a villager
+-     *
+-     * @return Whether the zombie is a villager
+-     */
+-    public boolean isVillager();
++    interface Husk extends Zombie {}
+ 
+-    /**
+-     * Sets whether the zombie is a villager
+-     *
+-     * @param flag Whether the zombie is a villager
+-     * @deprecated Defaults to a {@link Villager.Profession#NORMAL}
+-     */
+-    @Deprecated
+-    public void setVillager(boolean flag);
++    interface ZombieVillager extends Zombie {
++        /**
++         * Sets whether the zombie is a villager
++         *
++         * @param profession the profession of the villager or null to clear
++         */
++        public void setVillagerProfession(Villager.Profession profession);
+ 
+-    /**
+-     * Sets whether the zombie is a villager
+-     *
+-     * @param profession the profession of the villager or null to clear
+-     */
+-    public void setVillagerProfession(Villager.Profession profession);
+-
+-    /**
+-     * Returns the villager profession of the zombie if the
+-     * zombie is a villager
+-     *
+-     * @return the profession or null
+-     */
+-    public Villager.Profession getVillagerProfession();
++        /**
++         * Returns the villager profession of the zombie if the
++         * zombie is a villager
++         *
++         * @return the profession or null
++         */
++        public Villager.Profession getVillagerProfession();
++    }
+ }
+diff --git a/src/main/java/org/bukkit/event/entity/HorseJumpEvent.java b/src/main/java/org/bukkit/event/entity/HorseJumpEvent.java
+index 21ebab6..510b662 100644
+--- a/src/main/java/org/bukkit/event/entity/HorseJumpEvent.java
++++ b/src/main/java/org/bukkit/event/entity/HorseJumpEvent.java
+@@ -1,6 +1,6 @@
+ package org.bukkit.event.entity;
+ 
+-import org.bukkit.entity.Horse;
++import org.bukkit.entity.AbstractHorse.Horse;
+ import org.bukkit.event.Cancellable;
+ import org.bukkit.event.HandlerList;
+ 
+-- 
+1.9.5.msysgit.1
+
