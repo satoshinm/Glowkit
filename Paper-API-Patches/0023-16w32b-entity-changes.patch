@@ -1,4 +1,4 @@
-From 0fb1ce6d1882cf06c698d37c1c430ee2863308e2 Mon Sep 17 00:00:00 2001
+From 9cd7cc5208aa3ab0bd3ae43cf10cb468ac6b4899 Mon Sep 17 00:00:00 2001
 From: Momo <momo@momoperes.ca>
 Date: Thu, 11 Aug 2016 20:45:29 -0400
 Subject: [PATCH] 16w32b entity changes
@@ -17,12 +17,12 @@ index 7496b3d..66abfcd 100644
      <packaging>jar</packaging>
  
      <name>Glowkit</name>
-diff --git a/src/main/java/org/bukkit/entity/AbstractHorse.java b/src/main/java/org/bukkit/entity/AbstractHorse.java
+diff --git a/src/main/java/org/bukkit/entity/BaseHorse.java b/src/main/java/org/bukkit/entity/BaseHorse.java
 new file mode 100644
-index 0000000..a595caa
+index 0000000..28c091f
 --- /dev/null
-+++ b/src/main/java/org/bukkit/entity/AbstractHorse.java
-@@ -0,0 +1,198 @@
++++ b/src/main/java/org/bukkit/entity/BaseHorse.java
+@@ -0,0 +1,214 @@
 +package org.bukkit.entity;
 +
 +import org.bukkit.inventory.HorseInventory;
@@ -31,9 +31,81 @@ index 0000000..a595caa
 +/**
 + * Represents a Horse.
 + */
-+public interface AbstractHorse extends Animals, Vehicle, Tameable {
++public interface BaseHorse extends Animals, Vehicle, Tameable, InventoryHolder {
 +
-+    interface Horse extends AbstractHorse {
++    /**
++     * Gets the domestication level of this horse.
++     * <p>
++     * A higher domestication level indicates that the horse is closer to
++     * becoming tame. As the domestication level gets closer to the max
++     * domestication level, the chance of the horse becoming tame increases.
++     *
++     * @return domestication level
++     */
++    public int getDomestication();
++
++    /**
++     * Sets the domestication level of this horse.
++     * <p>
++     * Setting the domestication level to a high value will increase the
++     * horse's chances of becoming tame.
++     * <p>
++     * Domestication level must be greater than zero and no greater than
++     * the max domestication level of the horse, determined with
++     * {@link #getMaxDomestication()}
++     *
++     * @param level domestication level
++     */
++    public void setDomestication(int level);
++
++    /**
++     * Gets the maximum domestication level of this horse.
++     * <p>
++     * The higher this level is, the longer it will likely take
++     * for the horse to be tamed.
++     *
++     * @return the max domestication level
++     */
++    public int getMaxDomestication();
++
++    /**
++     * Sets the maximum domestication level of this horse.
++     * <p>
++     * Setting a higher max domestication will increase the amount of
++     * domesticating (feeding, riding, etc.) necessary in order to tame it,
++     * while setting a lower max value will have the opposite effect.
++     * <p>
++     * Maximum domestication must be greater than zero.
++     *
++     * @param level the max domestication level
++     */
++    public void setMaxDomestication(int level);
++
++    /**
++     * Gets the jump strength of this horse.
++     * <p>
++     * Jump strength defines how high the horse can jump. A higher jump strength
++     * increases how high a jump will go.
++     *
++     * @return the horse's jump strength
++     */
++    public double getJumpStrength();
++
++    /**
++     * Sets the jump strength of this horse.
++     * <p>
++     * A higher jump strength increases how high a jump will go.
++     * Setting a jump strength to 0 will result in no jump.
++     * You cannot set a jump strength to a value below 0 or
++     * above 2.
++     *
++     * @param strength jump strength for this horse
++     */
++    public void setJumpStrength(double strength);
++
++    public HorseInventory getInventory();
++
++    interface Horse extends BaseHorse {
 +
 +        /**
 +         * Represents the base color that the horse has.
@@ -138,102 +210,38 @@ index 0000000..a595caa
 +         * @param style a {@link Style} for this horse
 +         */
 +        public void setStyle(Style style);
-+
-+        /**
-+         * Gets the domestication level of this horse.
-+         * <p>
-+         * A higher domestication level indicates that the horse is closer to
-+         * becoming tame. As the domestication level gets closer to the max
-+         * domestication level, the chance of the horse becoming tame increases.
-+         *
-+         * @return domestication level
-+         */
-+        public int getDomestication();
-+
-+        /**
-+         * Sets the domestication level of this horse.
-+         * <p>
-+         * Setting the domestication level to a high value will increase the
-+         * horse's chances of becoming tame.
-+         * <p>
-+         * Domestication level must be greater than zero and no greater than
-+         * the max domestication level of the horse, determined with
-+         * {@link #getMaxDomestication()}
-+         *
-+         * @param level domestication level
-+         */
-+        public void setDomestication(int level);
-+
-+        /**
-+         * Gets the maximum domestication level of this horse.
-+         * <p>
-+         * The higher this level is, the longer it will likely take
-+         * for the horse to be tamed.
-+         *
-+         * @return the max domestication level
-+         */
-+        public int getMaxDomestication();
-+
-+        /**
-+         * Sets the maximum domestication level of this horse.
-+         * <p>
-+         * Setting a higher max domestication will increase the amount of
-+         * domesticating (feeding, riding, etc.) necessary in order to tame it,
-+         * while setting a lower max value will have the opposite effect.
-+         * <p>
-+         * Maximum domestication must be greater than zero.
-+         *
-+         * @param level the max domestication level
-+         */
-+        public void setMaxDomestication(int level);
-+
-+        /**
-+         * Gets the jump strength of this horse.
-+         * <p>
-+         * Jump strength defines how high the horse can jump. A higher jump strength
-+         * increases how high a jump will go.
-+         *
-+         * @return the horse's jump strength
-+         */
-+        public double getJumpStrength();
-+
-+        /**
-+         * Sets the jump strength of this horse.
-+         * <p>
-+         * A higher jump strength increases how high a jump will go.
-+         * Setting a jump strength to 0 will result in no jump.
-+         * You cannot set a jump strength to a value below 0 or
-+         * above 2.
-+         *
-+         * @param strength jump strength for this horse
-+         */
-+        public void setJumpStrength(double strength);
 +    }
 +
-+    interface ZombieHorse extends AbstractHorse {}
-+    interface SkeletonHorse extends AbstractHorse {}
++    interface ZombieHorse extends BaseHorse {}
++    interface SkeletonHorse extends BaseHorse {}
 +
-+    interface ChestedHorse extends AbstractHorse, InventoryHolder {
-+        @Override
-+        public HorseInventory getInventory();
++    interface ChestedHorse extends BaseHorse {
++
++        /**
++         * Gets whether the horse has a chest equipped.
++         *
++         * @return true if the horse has chest storage
++         */
++        public boolean isCarryingChest();
++
++        /**
++         * Sets whether the horse has a chest equipped.
++         * Removing a chest will also clear the chest's inventory.
++         *
++         * @param chest true if the horse should have a chest
++         */
++        public void setCarryingChest(boolean chest);
++
 +    }
 +
 +    interface Mule extends ChestedHorse {}
 +    interface Donkey extends ChestedHorse {}
 +}
 diff --git a/src/main/java/org/bukkit/entity/EntityType.java b/src/main/java/org/bukkit/entity/EntityType.java
-index 028e1f2..825cbed 100644
+index 028e1f2..2b5747c 100644
 --- a/src/main/java/org/bukkit/entity/EntityType.java
 +++ b/src/main/java/org/bukkit/entity/EntityType.java
-@@ -3,6 +3,7 @@ package org.bukkit.entity;
- import java.util.HashMap;
- import java.util.Map;
- 
-+import com.sun.istack.internal.Nullable;
- import org.bukkit.entity.minecart.CommandMinecart;
- import org.bukkit.entity.minecart.HopperMinecart;
- import org.bukkit.entity.minecart.SpawnerMinecart;
-@@ -24,193 +25,203 @@ public enum EntityType {
+@@ -24,193 +24,203 @@ public enum EntityType {
       * Spawn with {@link World#dropItem(Location, ItemStack)} or {@link
       * World#dropItemNaturally(Location, ItemStack)}
       */
@@ -340,10 +348,10 @@ index 028e1f2..825cbed 100644
 -    DRAGON_FIREBALL("DragonFireball", DragonFireball.class, 26),
 +    DRAGON_FIREBALL(Type.OBJECT, "DragonFireball", DragonFireball.class, "minecraft:dragon_fireball", 26),
 +    ZOMBIE_VILLAGER(Type.MOB, "ZombieVillager", Zombie.ZombieVillager.class, "minecraft:zombie_villager", 27),
-+    SKELETON_HORSE(Type.MOB, "SkeletonHorse", AbstractHorse.SkeletonHorse.class, "minecraft:skeleton_horse", 28),
-+    ZOMBIE_HORSE(Type.MOB, "ZombieHorse", AbstractHorse.ZombieHorse.class, "minecraft:zombie_horse", 29),
-+    DONKEY(Type.MOB, "Donkey", AbstractHorse.Donkey.class, "minecraft:donkey", 31),
-+    MULE(Type.MOB, "Mule", AbstractHorse.Mule.class, "minecraft:mule", 32),
++    SKELETON_HORSE(Type.MOB, "SkeletonHorse", BaseHorse.SkeletonHorse.class, "minecraft:skeleton_horse", 28),
++    ZOMBIE_HORSE(Type.MOB, "ZombieHorse", BaseHorse.ZombieHorse.class, "minecraft:zombie_horse", 29),
++    DONKEY(Type.MOB, "Donkey", BaseHorse.Donkey.class, "minecraft:donkey", 31),
++    MULE(Type.MOB, "Mule", BaseHorse.Mule.class, "minecraft:mule", 32),
 +
      /**
       * Mechanical entity with an inventory for placing weapons / armor into.
@@ -455,7 +463,7 @@ index 028e1f2..825cbed 100644
 +    SNOWMAN(null, "SnowMan", Snowman.class, "minecraft:snowman", 97),
 +    OCELOT(Type.MOB, "Ozelot", Ocelot.class, "minecraft:ocelot", 98),
 +    IRON_GOLEM(null, "VillagerGolem", IronGolem.class, "minecraft:villager_golem", 99),
-+    HORSE(Type.MOB, "Horse", AbstractHorse.Horse.class, "minecraft:horse", 100),
++    HORSE(Type.MOB, "Horse", BaseHorse.Horse.class, "minecraft:horse", 100),
 +    RABBIT(Type.MOB, "Rabbit", Rabbit.class, "minecraft:rabbit", 101),
 +    POLAR_BEAR(Type.MOB, "PolarBear", PolarBear.class, "minecraft:polar_bear", 102),
 +    VILLAGER(Type.MOB, "Villager", Villager.class, "minecraft:villager", 120),
@@ -517,7 +525,7 @@ index 028e1f2..825cbed 100644
  
      static {
          for (EntityType type : values()) {
-@@ -218,19 +229,24 @@ public enum EntityType {
+@@ -218,19 +228,24 @@ public enum EntityType {
                  NAME_MAP.put(type.name.toLowerCase(java.util.Locale.ENGLISH), type);
              }
              if (type.typeId > 0) {
@@ -546,7 +554,7 @@ index 028e1f2..825cbed 100644
          this.independent = independent;
          if (clazz != null) {
              this.living = LivingEntity.class.isAssignableFrom(clazz);
-@@ -238,7 +254,6 @@ public enum EntityType {
+@@ -238,7 +253,6 @@ public enum EntityType {
      }
  
      /**
@@ -554,7 +562,7 @@ index 028e1f2..825cbed 100644
       * @return the entity type's name
       * @deprecated Magic value
       */
-@@ -252,8 +267,7 @@ public enum EntityType {
+@@ -252,8 +266,7 @@ public enum EntityType {
      }
  
      /**
@@ -564,7 +572,7 @@ index 028e1f2..825cbed 100644
       * @deprecated Magic value
       */
      @Deprecated
-@@ -262,7 +276,20 @@ public enum EntityType {
+@@ -262,7 +275,20 @@ public enum EntityType {
      }
  
      /**
@@ -586,7 +594,7 @@ index 028e1f2..825cbed 100644
       * @param name the entity type's name
       * @return the matching entity type or null
       * @deprecated Magic value
-@@ -276,7 +303,6 @@ public enum EntityType {
+@@ -276,7 +302,6 @@ public enum EntityType {
      }
  
      /**
@@ -594,7 +602,7 @@ index 028e1f2..825cbed 100644
       * @param id the raw type id
       * @return the matching entity type or null
       * @deprecated Magic value
-@@ -286,7 +312,7 @@ public enum EntityType {
+@@ -286,7 +311,7 @@ public enum EntityType {
          if (id > Short.MAX_VALUE) {
              return null;
          }
@@ -603,7 +611,7 @@ index 028e1f2..825cbed 100644
      }
  
      /**
-@@ -304,4 +330,12 @@ public enum EntityType {
+@@ -304,4 +329,12 @@ public enum EntityType {
      public boolean isAlive() {
          return living;
      }
@@ -1000,14 +1008,14 @@ index a897d43..8fe7844 100644
 +    }
  }
 diff --git a/src/main/java/org/bukkit/event/entity/HorseJumpEvent.java b/src/main/java/org/bukkit/event/entity/HorseJumpEvent.java
-index 21ebab6..510b662 100644
+index 21ebab6..eccb234 100644
 --- a/src/main/java/org/bukkit/event/entity/HorseJumpEvent.java
 +++ b/src/main/java/org/bukkit/event/entity/HorseJumpEvent.java
 @@ -1,6 +1,6 @@
  package org.bukkit.event.entity;
  
 -import org.bukkit.entity.Horse;
-+import org.bukkit.entity.AbstractHorse.Horse;
++import org.bukkit.entity.BaseHorse.Horse;
  import org.bukkit.event.Cancellable;
  import org.bukkit.event.HandlerList;
  
