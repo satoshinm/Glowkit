@@ -1,11 +1,11 @@
-From 51954ec11e15225c7648f6f94fefd9b7f99a949d Mon Sep 17 00:00:00 2001
+From 6fed9fb8c5d095920d6c88f48cb871e0969bc47a Mon Sep 17 00:00:00 2001
 From: Momo <momo@momoperes.ca>
 Date: Thu, 11 Aug 2016 20:45:29 -0400
-Subject: [PATCH] Update to 16w36a
+Subject: [PATCH] Update to 16w38a
 
 
 diff --git a/pom.xml b/pom.xml
-index 7496b3d..8548307 100644
+index 7496b3d..24d2722 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -13,7 +13,7 @@
@@ -13,7 +13,7 @@ index 7496b3d..8548307 100644
      <groupId>net.glowstone</groupId>
      <artifactId>glowkit</artifactId>
 -    <version>1.10.2-R0.1-SNAPSHOT</version>
-+    <version>1.11-16w36a-R0.1-SNAPSHOT</version>
++    <version>1.11-16w38a-R0.1-SNAPSHOT</version>
      <packaging>jar</packaging>
  
      <name>Glowkit</name>
