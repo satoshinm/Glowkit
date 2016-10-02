@@ -1,22 +1,101 @@
-From 6fed9fb8c5d095920d6c88f48cb871e0969bc47a Mon Sep 17 00:00:00 2001
+From eaf7243ac01474eaf489f43e07221cc5f38cbda3 Mon Sep 17 00:00:00 2001
 From: Momo <momo@momoperes.ca>
 Date: Thu, 11 Aug 2016 20:45:29 -0400
-Subject: [PATCH] Update to 16w38a
+Subject: [PATCH] Update to 16w39c
 
 
 diff --git a/pom.xml b/pom.xml
-index 7496b3d..24d2722 100644
+index 7496b3d..a0e4064 100644
 --- a/pom.xml
 +++ b/pom.xml
-@@ -13,7 +13,7 @@
+@@ -1,4 +1,3 @@
+-
+ <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+     <modelVersion>4.0.0</modelVersion>
+@@ -13,7 +12,7 @@
  
      <groupId>net.glowstone</groupId>
      <artifactId>glowkit</artifactId>
 -    <version>1.10.2-R0.1-SNAPSHOT</version>
-+    <version>1.11-16w38a-R0.1-SNAPSHOT</version>
++    <version>1.11-16w39c-R0.1-SNAPSHOT</version>
      <packaging>jar</packaging>
  
      <name>Glowkit</name>
+@@ -56,7 +55,7 @@
+ 
+         <repository>
+             <id>destroystokyo-releases</id>
+-            <url>https://repo.destroystokyo.com/content/repositories/releases/</url>
++            <url>http://ci.emc.gs/nexus/content/repositories/aikar/</url>
+         </repository>
+     </repositories>
+ 
+diff --git a/src/main/java/org/bukkit/Material.java b/src/main/java/org/bukkit/Material.java
+index cd81663..8852a49 100644
+--- a/src/main/java/org/bukkit/Material.java
++++ b/src/main/java/org/bukkit/Material.java
+@@ -231,6 +231,8 @@ public enum Material {
+     RED_NETHER_BRICK(215),
+     BONE_BLOCK(216),
+     STRUCTURE_VOID(217),
++    SHULKER_BOX(219, 1),
++    OBSERVER(251),
+     STRUCTURE_BLOCK(255),
+     // ----- Item Separator -----
+     IRON_SPADE(256, 1, 250),
+@@ -429,6 +431,8 @@ public enum Material {
+     BOAT_JUNGLE(446, 1),
+     BOAT_ACACIA(447, 1),
+     BOAT_DARK_OAK(448, 1),
++    TOTEM_OF_UNDYING(449, 1),
++    SHULKER_SHELL(450),
+     GOLD_RECORD(2256, 1),
+     GREEN_RECORD(2257, 1),
+     RECORD_3(2258, 1),
+diff --git a/src/main/java/org/bukkit/enchantments/Enchantment.java b/src/main/java/org/bukkit/enchantments/Enchantment.java
+index a23ee5c..2571d50 100644
+--- a/src/main/java/org/bukkit/enchantments/Enchantment.java
++++ b/src/main/java/org/bukkit/enchantments/Enchantment.java
+@@ -1,11 +1,11 @@
+ package org.bukkit.enchantments;
+ 
+-import java.util.HashMap;
+-import java.util.Map;
+-
+ import org.bukkit.command.defaults.EnchantCommand;
+ import org.bukkit.inventory.ItemStack;
+ 
++import java.util.HashMap;
++import java.util.Map;
++
+ /**
+  * The various type of enchantments that may be added to armour or weapons
+  */
+@@ -61,6 +61,11 @@ public abstract class Enchantment {
+     public static final Enchantment FROST_WALKER = new EnchantmentWrapper(9);
+ 
+     /**
++     * The cursed item will not be able to be removed outside of creative mode unless the player dies.
++     */
++    public static final Enchantment BINDING_CURSE = new EnchantmentWrapper(10);
++
++    /**
+      * Increases damage against all targets
+      */
+     public static final Enchantment DAMAGE_ALL = new EnchantmentWrapper(16);
+@@ -146,6 +151,11 @@ public abstract class Enchantment {
+      */
+     public static final Enchantment MENDING = new EnchantmentWrapper(70);
+ 
++    /**
++     * When the player dies, the item disappears instead of dropping on the ground.
++     */
++    public static final Enchantment VANISHING_CURSE = new EnchantmentWrapper(71);
++
+     private static final Map<Integer, Enchantment> byId = new HashMap<Integer, Enchantment>();
+     private static final Map<String, Enchantment> byName = new HashMap<String, Enchantment>();
+     private static boolean acceptingNew = true;
 diff --git a/src/main/java/org/bukkit/entity/BaseHorse.java b/src/main/java/org/bukkit/entity/BaseHorse.java
 new file mode 100644
 index 0000000..28c091f
@@ -238,10 +317,37 @@ index 0000000..28c091f
 +    interface Donkey extends ChestedHorse {}
 +}
 diff --git a/src/main/java/org/bukkit/entity/EntityType.java b/src/main/java/org/bukkit/entity/EntityType.java
-index 028e1f2..2b5747c 100644
+index 028e1f2..413b67f 100644
 --- a/src/main/java/org/bukkit/entity/EntityType.java
 +++ b/src/main/java/org/bukkit/entity/EntityType.java
-@@ -24,193 +24,203 @@ public enum EntityType {
+@@ -1,20 +1,16 @@
+ package org.bukkit.entity;
+ 
+-import java.util.HashMap;
+-import java.util.Map;
+-
+-import org.bukkit.entity.minecart.CommandMinecart;
+-import org.bukkit.entity.minecart.HopperMinecart;
+-import org.bukkit.entity.minecart.SpawnerMinecart;
+-import org.bukkit.entity.minecart.RideableMinecart;
+-import org.bukkit.entity.minecart.ExplosiveMinecart;
++import org.bukkit.Location;
++import org.bukkit.World;
++import org.bukkit.entity.minecart.*;
+ import org.bukkit.entity.minecart.PoweredMinecart;
+ import org.bukkit.entity.minecart.StorageMinecart;
+ import org.bukkit.inventory.ItemStack;
+-import org.bukkit.Location;
+-import org.bukkit.World;
+ import org.bukkit.potion.PotionEffectType;
+ 
++import java.util.HashMap;
++import java.util.Map;
++
+ public enum EntityType {
+ 
+     // These strings MUST match the strings in nms.EntityTypes and are case sensitive.
+@@ -24,193 +20,208 @@ public enum EntityType {
       * Spawn with {@link World#dropItem(Location, ItemStack)} or {@link
       * World#dropItemNaturally(Location, ItemStack)}
       */
@@ -325,16 +431,16 @@ index 028e1f2..2b5747c 100644
       * Internal representation of a Firework once it has been launched.
       */
 -    FIREWORK("FireworksRocketEntity", Firework.class, 22, false),
+-    /**
+-     * Like {@link #ARROW} but tipped with a specific potion which is applied on contact.
+-     */
+-    TIPPED_ARROW("TippedArrow", TippedArrow.class, 23),
 +    FIREWORK(Type.OBJECT, "FireworksRocketEntity", Firework.class, "minecraft:fireworks_rocket", 22, false),
 +    HUSK(Type.MOB, "Husk", Zombie.Husk.class, "minecraft:husk", 23),
      /**
--     * Like {@link #ARROW} but tipped with a specific potion which is applied on contact.
+-     * Like {@link #TIPPED_ARROW} but causes the {@link PotionEffectType#GLOWING} effect on all team members.
 +     * Causes the {@link PotionEffectType#GLOWING} effect on all team members.
       */
--    TIPPED_ARROW("TippedArrow", TippedArrow.class, 23),
--    /**
--     * Like {@link #TIPPED_ARROW} but causes the {@link PotionEffectType#GLOWING} effect on all team members.
--     */
 -    SPECTRAL_ARROW("SpectralArrow", SpectralArrow.class, 24),
 +    SPECTRAL_ARROW(Type.OBJECT, "SpectralArrow", SpectralArrow.class, "minecraft:spectral_arrow", 24),
      /**
@@ -353,6 +459,10 @@ index 028e1f2..2b5747c 100644
 +    DONKEY(Type.MOB, "Donkey", BaseHorse.Donkey.class, "minecraft:donkey", 31),
 +    MULE(Type.MOB, "Mule", BaseHorse.Mule.class, "minecraft:mule", 32),
 +
++    EVOCATION_FANGS(Type.OBJECT, "EvocationFangs", EvocationFangs.class, "minecraft:evocation_fangs", 33),
++    EVOCATION_ILLAGER(Type.MOB, "EvocationIllager", EvocationIllager.class, "minecraft:evocation_illager", 34),
++    VEX(Type.MOB, "EvocationFangs", Vex.class, "minecraft:vex", 35),
++    VINDICATION_ILLAGER(Type.MOB, "VindicationIllager", VindicationIllager.class, "minecraft:vindication_illager", 36),
      /**
       * Mechanical entity with an inventory for placing weapons / armor into.
       */
@@ -466,6 +576,7 @@ index 028e1f2..2b5747c 100644
 +    HORSE(Type.MOB, "Horse", BaseHorse.Horse.class, "minecraft:horse", 100),
 +    RABBIT(Type.MOB, "Rabbit", Rabbit.class, "minecraft:rabbit", 101),
 +    POLAR_BEAR(Type.MOB, "PolarBear", PolarBear.class, "minecraft:polar_bear", 102),
++    LLAMA(Type.MOB, "Llama", Llama.class, "minecraft:llama", 103),
 +    VILLAGER(Type.MOB, "Villager", Villager.class, "minecraft:villager", 120),
 +    ENDER_CRYSTAL(Type.OBJECT, "EnderCrystal", EnderCrystal.class, "minecraft:ender_crystal", 200),
      // These don't have an entity ID in nms.EntityTypes.
@@ -525,7 +636,7 @@ index 028e1f2..2b5747c 100644
  
      static {
          for (EntityType type : values()) {
-@@ -218,19 +228,24 @@ public enum EntityType {
+@@ -218,19 +229,24 @@ public enum EntityType {
                  NAME_MAP.put(type.name.toLowerCase(java.util.Locale.ENGLISH), type);
              }
              if (type.typeId > 0) {
@@ -554,7 +665,7 @@ index 028e1f2..2b5747c 100644
          this.independent = independent;
          if (clazz != null) {
              this.living = LivingEntity.class.isAssignableFrom(clazz);
-@@ -238,7 +253,6 @@ public enum EntityType {
+@@ -238,7 +254,6 @@ public enum EntityType {
      }
  
      /**
@@ -562,7 +673,7 @@ index 028e1f2..2b5747c 100644
       * @return the entity type's name
       * @deprecated Magic value
       */
-@@ -252,8 +266,7 @@ public enum EntityType {
+@@ -252,8 +267,7 @@ public enum EntityType {
      }
  
      /**
@@ -572,7 +683,7 @@ index 028e1f2..2b5747c 100644
       * @deprecated Magic value
       */
      @Deprecated
-@@ -262,7 +275,20 @@ public enum EntityType {
+@@ -262,7 +276,20 @@ public enum EntityType {
      }
  
      /**
@@ -594,7 +705,7 @@ index 028e1f2..2b5747c 100644
       * @param name the entity type's name
       * @return the matching entity type or null
       * @deprecated Magic value
-@@ -276,7 +302,6 @@ public enum EntityType {
+@@ -276,7 +303,6 @@ public enum EntityType {
      }
  
      /**
@@ -602,7 +713,7 @@ index 028e1f2..2b5747c 100644
       * @param id the raw type id
       * @return the matching entity type or null
       * @deprecated Magic value
-@@ -286,7 +311,7 @@ public enum EntityType {
+@@ -286,7 +312,7 @@ public enum EntityType {
          if (id > Short.MAX_VALUE) {
              return null;
          }
@@ -611,7 +722,7 @@ index 028e1f2..2b5747c 100644
      }
  
      /**
-@@ -304,4 +329,12 @@ public enum EntityType {
+@@ -304,4 +330,12 @@ public enum EntityType {
      public boolean isAlive() {
          return living;
      }
@@ -624,6 +735,24 @@ index 028e1f2..2b5747c 100644
 +        OBJECT, MOB
 +    }
  }
+diff --git a/src/main/java/org/bukkit/entity/EvocationFangs.java b/src/main/java/org/bukkit/entity/EvocationFangs.java
+new file mode 100644
+index 0000000..08fc7bd
+--- /dev/null
++++ b/src/main/java/org/bukkit/entity/EvocationFangs.java
+@@ -0,0 +1,3 @@
++package org.bukkit.entity;
++
++public interface EvocationFangs extends Entity {}
+diff --git a/src/main/java/org/bukkit/entity/EvocationIllager.java b/src/main/java/org/bukkit/entity/EvocationIllager.java
+new file mode 100644
+index 0000000..6f05c34
+--- /dev/null
++++ b/src/main/java/org/bukkit/entity/EvocationIllager.java
+@@ -0,0 +1,3 @@
++package org.bukkit.entity;
++
++public interface EvocationIllager extends Monster {}
 diff --git a/src/main/java/org/bukkit/entity/Guardian.java b/src/main/java/org/bukkit/entity/Guardian.java
 index 31f3c6a..30587c4 100644
 --- a/src/main/java/org/bukkit/entity/Guardian.java
@@ -909,6 +1038,41 @@ index e90d318..0000000
 -    @Override
 -    public HorseInventory getInventory();
 -}
+diff --git a/src/main/java/org/bukkit/entity/Llama.java b/src/main/java/org/bukkit/entity/Llama.java
+new file mode 100644
+index 0000000..8942735
+--- /dev/null
++++ b/src/main/java/org/bukkit/entity/Llama.java
+@@ -0,0 +1,18 @@
++package org.bukkit.entity;
++
++import org.bukkit.material.Colorable;
++
++public interface Llama extends BaseHorse.ChestedHorse, Colorable {
++
++    public int getStrength();
++
++    public void setStrength(int strength);
++
++    public Variant getVariant();
++
++    public void setVariant(Variant variant);
++
++    public enum Variant {
++        BROWN, CREAMY, GRAY, WHITE
++    }
++}
+diff --git a/src/main/java/org/bukkit/entity/Shulker.java b/src/main/java/org/bukkit/entity/Shulker.java
+index 92218cd..3441bdb 100644
+--- a/src/main/java/org/bukkit/entity/Shulker.java
++++ b/src/main/java/org/bukkit/entity/Shulker.java
+@@ -1,3 +1,5 @@
+ package org.bukkit.entity;
+ 
+-public interface Shulker extends Golem {}
++import org.bukkit.material.Colorable;
++
++public interface Shulker extends Golem, Colorable {}
 diff --git a/src/main/java/org/bukkit/entity/Skeleton.java b/src/main/java/org/bukkit/entity/Skeleton.java
 index bea790e..a280347 100644
 --- a/src/main/java/org/bukkit/entity/Skeleton.java
@@ -952,6 +1116,34 @@ index bea790e..a280347 100644
 +    interface Stray extends Skeleton {}
 +    interface WitherSkeleton extends Skeleton {}
  }
+diff --git a/src/main/java/org/bukkit/entity/Vex.java b/src/main/java/org/bukkit/entity/Vex.java
+new file mode 100644
+index 0000000..5091b75
+--- /dev/null
++++ b/src/main/java/org/bukkit/entity/Vex.java
+@@ -0,0 +1,8 @@
++package org.bukkit.entity;
++
++public interface Vex extends Monster {
++
++    public boolean isAttacking();
++
++    public void setAttacking(boolean attacking);
++}
+diff --git a/src/main/java/org/bukkit/entity/VindicationIllager.java b/src/main/java/org/bukkit/entity/VindicationIllager.java
+new file mode 100644
+index 0000000..656e219
+--- /dev/null
++++ b/src/main/java/org/bukkit/entity/VindicationIllager.java
+@@ -0,0 +1,8 @@
++package org.bukkit.entity;
++
++public interface VindicationIllager extends Monster {
++
++    public boolean isAggressive();
++
++    public void setAggressive(boolean aggressive);
++}
 diff --git a/src/main/java/org/bukkit/entity/Zombie.java b/src/main/java/org/bukkit/entity/Zombie.java
 index a897d43..8fe7844 100644
 --- a/src/main/java/org/bukkit/entity/Zombie.java
