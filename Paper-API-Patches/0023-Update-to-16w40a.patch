@@ -1,11 +1,11 @@
-From eaf7243ac01474eaf489f43e07221cc5f38cbda3 Mon Sep 17 00:00:00 2001
+From 0396a700ac19b0a851811cc30881829294b43971 Mon Sep 17 00:00:00 2001
 From: Momo <momo@momoperes.ca>
 Date: Thu, 11 Aug 2016 20:45:29 -0400
-Subject: [PATCH] Update to 16w39c
+Subject: [PATCH] Update to 16w40a
 
 
 diff --git a/pom.xml b/pom.xml
-index 7496b3d..a0e4064 100644
+index 7496b3d..428b4f7 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -1,4 +1,3 @@
@@ -18,7 +18,7 @@ index 7496b3d..a0e4064 100644
      <groupId>net.glowstone</groupId>
      <artifactId>glowkit</artifactId>
 -    <version>1.10.2-R0.1-SNAPSHOT</version>
-+    <version>1.11-16w39c-R0.1-SNAPSHOT</version>
++    <version>1.11-16w40a-R0.1-SNAPSHOT</version>
      <packaging>jar</packaging>
  
      <name>Glowkit</name>
@@ -96,12 +96,12 @@ index a23ee5c..2571d50 100644
      private static final Map<Integer, Enchantment> byId = new HashMap<Integer, Enchantment>();
      private static final Map<String, Enchantment> byName = new HashMap<String, Enchantment>();
      private static boolean acceptingNew = true;
-diff --git a/src/main/java/org/bukkit/entity/BaseHorse.java b/src/main/java/org/bukkit/entity/BaseHorse.java
+diff --git a/src/main/java/org/bukkit/entity/AbstractHorse.java b/src/main/java/org/bukkit/entity/AbstractHorse.java
 new file mode 100644
-index 0000000..28c091f
+index 0000000..7659ec1
 --- /dev/null
-+++ b/src/main/java/org/bukkit/entity/BaseHorse.java
-@@ -0,0 +1,214 @@
++++ b/src/main/java/org/bukkit/entity/AbstractHorse.java
+@@ -0,0 +1,82 @@
 +package org.bukkit.entity;
 +
 +import org.bukkit.inventory.HorseInventory;
@@ -110,7 +110,7 @@ index 0000000..28c091f
 +/**
 + * Represents a Horse.
 + */
-+public interface BaseHorse extends Animals, Vehicle, Tameable, InventoryHolder {
++interface AbstractHorse extends Animals, Vehicle, Tameable, InventoryHolder {
 +
 +    /**
 +     * Gets the domestication level of this horse.
@@ -183,141 +183,44 @@ index 0000000..28c091f
 +    public void setJumpStrength(double strength);
 +
 +    public HorseInventory getInventory();
++}
+diff --git a/src/main/java/org/bukkit/entity/ChestedHorse.java b/src/main/java/org/bukkit/entity/ChestedHorse.java
+new file mode 100644
+index 0000000..c8162b4
+--- /dev/null
++++ b/src/main/java/org/bukkit/entity/ChestedHorse.java
+@@ -0,0 +1,19 @@
++package org.bukkit.entity;
 +
-+    interface Horse extends BaseHorse {
++interface ChestedHorse extends AbstractHorse {
 +
-+        /**
-+         * Represents the base color that the horse has.
-+         */
-+        public enum Color {
-+            /**
-+             * Snow white
-+             */
-+            WHITE,
-+            /**
-+             * Very light brown
-+             */
-+            CREAMY,
-+            /**
-+             * Chestnut
-+             */
-+            CHESTNUT,
-+            /**
-+             * Light brown
-+             */
-+            BROWN,
-+            /**
-+             * Pitch black
-+             */
-+            BLACK,
-+            /**
-+             * Gray
-+             */
-+            GRAY,
-+            /**
-+             * Dark brown
-+             */
-+            DARK_BROWN,
-+            ;
-+        }
++    /**
++     * Gets whether the horse has a chest equipped.
++     *
++     * @return true if the horse has chest storage
++     */
++    public boolean isCarryingChest();
 +
-+        /**
-+         * Represents the style, or markings, that the horse has.
-+         */
-+        public enum Style {
-+            /**
-+             * No markings
-+             */
-+            NONE,
-+            /**
-+             * White socks or stripes
-+             */
-+            WHITE,
-+            /**
-+             * Milky splotches
-+             */
-+            WHITEFIELD,
-+            /**
-+             * Round white dots
-+             */
-+            WHITE_DOTS,
-+            /**
-+             * Small black dots
-+             */
-+            BLACK_DOTS,
-+            ;
-+        }
++    /**
++     * Sets whether the horse has a chest equipped.
++     * Removing a chest will also clear the chest's inventory.
++     *
++     * @param chest true if the horse should have a chest
++     */
++    public void setCarryingChest(boolean chest);
++}
+diff --git a/src/main/java/org/bukkit/entity/Donkey.java b/src/main/java/org/bukkit/entity/Donkey.java
+new file mode 100644
+index 0000000..2c9b66d
+--- /dev/null
++++ b/src/main/java/org/bukkit/entity/Donkey.java
+@@ -0,0 +1,4 @@
++package org.bukkit.entity;
 +
-+        /**
-+         * Gets the horse's color.
-+         * <p>
-+         * Colors only apply to horses, not to donkeys, mules, skeleton horses
-+         * or undead horses.
-+         *
-+         * @return a {@link Color} representing the horse's group
-+         */
-+        public Color getColor();
-+
-+        /**
-+         * Sets the horse's color.
-+         * <p>
-+         * Attempting to set a color for any donkey, mule, skeleton horse or
-+         * undead horse will not result in a change.
-+         *
-+         * @param color a {@link Color} for this horse
-+         */
-+        public void setColor(Color color);
-+
-+        /**
-+         * Gets the horse's style.
-+         * Styles determine what kind of markings or patterns a horse has.
-+         * <p>
-+         * Styles only apply to horses, not to donkeys, mules, skeleton horses
-+         * or undead horses.
-+         *
-+         * @return a {@link Style} representing the horse's style
-+         */
-+        public Style getStyle();
-+
-+        /**
-+         * Sets the style of this horse.
-+         * Styles determine what kind of markings or patterns a horse has.
-+         * <p>
-+         * Attempting to set a style for any donkey, mule, skeleton horse or
-+         * undead horse will not result in a change.
-+         *
-+         * @param style a {@link Style} for this horse
-+         */
-+        public void setStyle(Style style);
-+    }
-+
-+    interface ZombieHorse extends BaseHorse {}
-+    interface SkeletonHorse extends BaseHorse {}
-+
-+    interface ChestedHorse extends BaseHorse {
-+
-+        /**
-+         * Gets whether the horse has a chest equipped.
-+         *
-+         * @return true if the horse has chest storage
-+         */
-+        public boolean isCarryingChest();
-+
-+        /**
-+         * Sets whether the horse has a chest equipped.
-+         * Removing a chest will also clear the chest's inventory.
-+         *
-+         * @param chest true if the horse should have a chest
-+         */
-+        public void setCarryingChest(boolean chest);
-+
-+    }
-+
-+    interface Mule extends ChestedHorse {}
-+    interface Donkey extends ChestedHorse {}
++public interface Donkey extends ChestedHorse {
 +}
 diff --git a/src/main/java/org/bukkit/entity/EntityType.java b/src/main/java/org/bukkit/entity/EntityType.java
-index 028e1f2..413b67f 100644
+index 028e1f2..9ee4974 100644
 --- a/src/main/java/org/bukkit/entity/EntityType.java
 +++ b/src/main/java/org/bukkit/entity/EntityType.java
 @@ -1,20 +1,16 @@
@@ -454,10 +357,10 @@ index 028e1f2..413b67f 100644
 -    DRAGON_FIREBALL("DragonFireball", DragonFireball.class, 26),
 +    DRAGON_FIREBALL(Type.OBJECT, "DragonFireball", DragonFireball.class, "minecraft:dragon_fireball", 26),
 +    ZOMBIE_VILLAGER(Type.MOB, "ZombieVillager", Zombie.ZombieVillager.class, "minecraft:zombie_villager", 27),
-+    SKELETON_HORSE(Type.MOB, "SkeletonHorse", BaseHorse.SkeletonHorse.class, "minecraft:skeleton_horse", 28),
-+    ZOMBIE_HORSE(Type.MOB, "ZombieHorse", BaseHorse.ZombieHorse.class, "minecraft:zombie_horse", 29),
-+    DONKEY(Type.MOB, "Donkey", BaseHorse.Donkey.class, "minecraft:donkey", 31),
-+    MULE(Type.MOB, "Mule", BaseHorse.Mule.class, "minecraft:mule", 32),
++    SKELETON_HORSE(Type.MOB, "SkeletonHorse", SkeletonHorse.class, "minecraft:skeleton_horse", 28),
++    ZOMBIE_HORSE(Type.MOB, "ZombieHorse", ZombieHorse.class, "minecraft:zombie_horse", 29),
++    DONKEY(Type.MOB, "Donkey", Donkey.class, "minecraft:donkey", 31),
++    MULE(Type.MOB, "Mule", Mule.class, "minecraft:mule", 32),
 +
 +    EVOCATION_FANGS(Type.OBJECT, "EvocationFangs", EvocationFangs.class, "minecraft:evocation_fangs", 33),
 +    EVOCATION_ILLAGER(Type.MOB, "EvocationIllager", EvocationIllager.class, "minecraft:evocation_illager", 34),
@@ -573,7 +476,7 @@ index 028e1f2..413b67f 100644
 +    SNOWMAN(null, "SnowMan", Snowman.class, "minecraft:snowman", 97),
 +    OCELOT(Type.MOB, "Ozelot", Ocelot.class, "minecraft:ocelot", 98),
 +    IRON_GOLEM(null, "VillagerGolem", IronGolem.class, "minecraft:villager_golem", 99),
-+    HORSE(Type.MOB, "Horse", BaseHorse.Horse.class, "minecraft:horse", 100),
++    HORSE(Type.MOB, "Horse", Horse.class, "minecraft:horse", 100),
 +    RABBIT(Type.MOB, "Rabbit", Rabbit.class, "minecraft:rabbit", 101),
 +    POLAR_BEAR(Type.MOB, "PolarBear", PolarBear.class, "minecraft:polar_bear", 102),
 +    LLAMA(Type.MOB, "Llama", Llama.class, "minecraft:llama", 103),
@@ -777,13 +680,12 @@ index 31f3c6a..30587c4 100644
 +    interface ElderGuardian extends Guardian {}
  }
 diff --git a/src/main/java/org/bukkit/entity/Horse.java b/src/main/java/org/bukkit/entity/Horse.java
-deleted file mode 100644
-index e90d318..0000000
+index e90d318..1174afd 100644
 --- a/src/main/java/org/bukkit/entity/Horse.java
-+++ /dev/null
-@@ -1,256 +0,0 @@
--package org.bukkit.entity;
--
++++ b/src/main/java/org/bukkit/entity/Horse.java
+@@ -1,39 +1,6 @@
+ package org.bukkit.entity;
+ 
 -import org.bukkit.inventory.HorseInventory;
 -import org.bukkit.inventory.InventoryHolder;
 -
@@ -818,70 +720,30 @@ index e90d318..0000000
 -        SKELETON_HORSE,
 -        ;
 -    }
--
--    /**
--     * Represents the base color that the horse has.
--     */
--    public enum Color {
--        /**
--         * Snow white
--         */
--        WHITE,
--        /**
--         * Very light brown
--         */
--        CREAMY,
--        /**
--         * Chestnut
--         */
--        CHESTNUT,
--        /**
--         * Light brown
--         */
--        BROWN,
--        /**
--         * Pitch black
--         */
--        BLACK,
--        /**
--         * Gray
--         */
--        GRAY,
--        /**
--         * Dark brown
--         */
++public interface Horse extends AbstractHorse {
+ 
+     /**
+      * Represents the base color that the horse has.
+@@ -66,8 +33,7 @@ public interface Horse extends Animals, Vehicle, InventoryHolder, Tameable {
+         /**
+          * Dark brown
+          */
 -        DARK_BROWN,
 -        ;
--    }
--
--    /**
--     * Represents the style, or markings, that the horse has.
--     */
--    public enum Style {
--        /**
--         * No markings
--         */
--        NONE,
--        /**
--         * White socks or stripes
--         */
--        WHITE,
--        /**
--         * Milky splotches
--         */
--        WHITEFIELD,
--        /**
--         * Round white dots
--         */
--        WHITE_DOTS,
--        /**
--         * Small black dots
--         */
++        DARK_BROWN,;
+     }
+ 
+     /**
+@@ -93,46 +59,18 @@ public interface Horse extends Animals, Vehicle, InventoryHolder, Tameable {
+         /**
+          * Small black dots
+          */
 -        BLACK_DOTS,
 -        ;
--    }
--
--    /**
++        BLACK_DOTS,;
+     }
+ 
+     /**
 -     * Gets the horse's variant.
 -     * <p>
 -     * A horse's variant defines its physical appearance and capabilities.
@@ -909,43 +771,47 @@ index e90d318..0000000
 -    public void setVariant(Variant variant);
 -
 -    /**
--     * Gets the horse's color.
--     * <p>
--     * Colors only apply to horses, not to donkeys, mules, skeleton horses
--     * or undead horses.
--     *
+      * Gets the horse's color.
+      * <p>
+      * Colors only apply to horses, not to donkeys, mules, skeleton horses
+      * or undead horses.
+      *
 -     * @return a {@link Color} representing the horse's group
--     */
++     * @return a {@link Horse.Color} representing the horse's group
+      */
 -    public Color getColor();
--
--    /**
--     * Sets the horse's color.
--     * <p>
--     * Attempting to set a color for any donkey, mule, skeleton horse or
--     * undead horse will not result in a change.
--     *
++    public Horse.Color getColor();
+ 
+     /**
+      * Sets the horse's color.
+@@ -140,9 +78,9 @@ public interface Horse extends Animals, Vehicle, InventoryHolder, Tameable {
+      * Attempting to set a color for any donkey, mule, skeleton horse or
+      * undead horse will not result in a change.
+      *
 -     * @param color a {@link Color} for this horse
--     */
++     * @param color a {@link Horse.Color} for this horse
+      */
 -    public void setColor(Color color);
--
--    /**
--     * Gets the horse's style.
--     * Styles determine what kind of markings or patterns a horse has.
--     * <p>
--     * Styles only apply to horses, not to donkeys, mules, skeleton horses
--     * or undead horses.
--     *
++    public void setColor(Horse.Color color);
+ 
+     /**
+      * Gets the horse's style.
+@@ -151,9 +89,9 @@ public interface Horse extends Animals, Vehicle, InventoryHolder, Tameable {
+      * Styles only apply to horses, not to donkeys, mules, skeleton horses
+      * or undead horses.
+      *
 -     * @return a {@link Style} representing the horse's style
--     */
++     * @return a {@link Horse.Style} representing the horse's style
+      */
 -    public Style getStyle();
--
--    /**
--     * Sets the style of this horse.
--     * Styles determine what kind of markings or patterns a horse has.
--     * <p>
--     * Attempting to set a style for any donkey, mule, skeleton horse or
--     * undead horse will not result in a change.
--     *
++    public Horse.Style getStyle();
+ 
+     /**
+      * Sets the style of this horse.
+@@ -162,95 +100,7 @@ public interface Horse extends Animals, Vehicle, InventoryHolder, Tameable {
+      * Attempting to set a style for any donkey, mule, skeleton horse or
+      * undead horse will not result in a change.
+      *
 -     * @param style a {@link Style} for this horse
 -     */
 -    public void setStyle(Style style);
@@ -962,7 +828,8 @@ index e90d318..0000000
 -     * Removing a chest will also clear the chest's inventory.
 -     *
 -     * @param chest true if the horse should have a chest
--     */
++     * @param style a {@link Horse.Style} for this horse
+      */
 -    public void setCarryingChest(boolean chest);
 -
 -    /**
@@ -1037,30 +904,61 @@ index e90d318..0000000
 -
 -    @Override
 -    public HorseInventory getInventory();
--}
++    public void setStyle(Horse.Style style);
+ }
 diff --git a/src/main/java/org/bukkit/entity/Llama.java b/src/main/java/org/bukkit/entity/Llama.java
 new file mode 100644
-index 0000000..8942735
+index 0000000..f5a14af
 --- /dev/null
 +++ b/src/main/java/org/bukkit/entity/Llama.java
-@@ -0,0 +1,18 @@
+@@ -0,0 +1,38 @@
 +package org.bukkit.entity;
 +
 +import org.bukkit.material.Colorable;
 +
-+public interface Llama extends BaseHorse.ChestedHorse, Colorable {
++public interface Llama extends ChestedHorse, Colorable {
 +
++    /**
++     * The strength of the llama, meaning the number of columns of 3 slots in the llama's inventory
++     *
++     * @return the strength of the llama
++     */
 +    public int getStrength();
 +
++    /**
++     * Sets the strength of the llama, meaning the number of columns of 3 slots in the llama's inventory
++     *
++     * @param strength the new strength of the llama
++     */
 +    public void setStrength(int strength);
 +
++    /**
++     * The texture variant of the llama
++     *
++     * @return the {@link Llama.Variant} of this llama
++     */
 +    public Variant getVariant();
 +
++    /**
++     * Sets the texture variant of the llama
++     *
++     * @param variant the new {@link Llama.Variant} of this llama
++     */
 +    public void setVariant(Variant variant);
 +
 +    public enum Variant {
 +        BROWN, CREAMY, GRAY, WHITE
 +    }
++}
+diff --git a/src/main/java/org/bukkit/entity/Mule.java b/src/main/java/org/bukkit/entity/Mule.java
+new file mode 100644
+index 0000000..652d4ef
+--- /dev/null
++++ b/src/main/java/org/bukkit/entity/Mule.java
+@@ -0,0 +1,4 @@
++package org.bukkit.entity;
++
++public interface Mule extends ChestedHorse {
 +}
 diff --git a/src/main/java/org/bukkit/entity/Shulker.java b/src/main/java/org/bukkit/entity/Shulker.java
 index 92218cd..3441bdb 100644
@@ -1116,6 +1014,16 @@ index bea790e..a280347 100644
 +    interface Stray extends Skeleton {}
 +    interface WitherSkeleton extends Skeleton {}
  }
+diff --git a/src/main/java/org/bukkit/entity/SkeletonHorse.java b/src/main/java/org/bukkit/entity/SkeletonHorse.java
+new file mode 100644
+index 0000000..257fb8a
+--- /dev/null
++++ b/src/main/java/org/bukkit/entity/SkeletonHorse.java
+@@ -0,0 +1,4 @@
++package org.bukkit.entity;
++
++public interface SkeletonHorse extends AbstractHorse {
++}
 diff --git a/src/main/java/org/bukkit/entity/Vex.java b/src/main/java/org/bukkit/entity/Vex.java
 new file mode 100644
 index 0000000..5091b75
@@ -1199,15 +1107,25 @@ index a897d43..8fe7844 100644
 +        public Villager.Profession getVillagerProfession();
 +    }
  }
+diff --git a/src/main/java/org/bukkit/entity/ZombieHorse.java b/src/main/java/org/bukkit/entity/ZombieHorse.java
+new file mode 100644
+index 0000000..d93ac51
+--- /dev/null
++++ b/src/main/java/org/bukkit/entity/ZombieHorse.java
+@@ -0,0 +1,4 @@
++package org.bukkit.entity;
++
++public interface ZombieHorse extends AbstractHorse {
++}
 diff --git a/src/main/java/org/bukkit/event/entity/HorseJumpEvent.java b/src/main/java/org/bukkit/event/entity/HorseJumpEvent.java
-index 21ebab6..eccb234 100644
+index 21ebab6..510b662 100644
 --- a/src/main/java/org/bukkit/event/entity/HorseJumpEvent.java
 +++ b/src/main/java/org/bukkit/event/entity/HorseJumpEvent.java
 @@ -1,6 +1,6 @@
  package org.bukkit.event.entity;
  
 -import org.bukkit.entity.Horse;
-+import org.bukkit.entity.BaseHorse.Horse;
++import org.bukkit.entity.AbstractHorse.Horse;
  import org.bukkit.event.Cancellable;
  import org.bukkit.event.HandlerList;
  
