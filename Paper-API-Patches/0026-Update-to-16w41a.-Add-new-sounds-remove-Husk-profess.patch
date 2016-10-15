@@ -1,0 +1,245 @@
+From 150c649a768025ddfc3ecf019f5f09911f3a27c1 Mon Sep 17 00:00:00 2001
+From: momothereal <momo@momoperes.ca>
+Date: Fri, 14 Oct 2016 21:39:22 -0400
+Subject: [PATCH] Update to 16w41a. Add new sounds, remove Husk profession, add
+ LlamaSpit entity
+
+
+diff --git a/src/main/java/org/bukkit/Sound.java b/src/main/java/org/bukkit/Sound.java
+index e7c1747..45106fb 100644
+--- a/src/main/java/org/bukkit/Sound.java
++++ b/src/main/java/org/bukkit/Sound.java
+@@ -96,6 +96,8 @@ public enum Sound {
+     BLOCK_SAND_HIT("minecraft:block.sand.hit", BLOCK),
+     BLOCK_SAND_PLACE("minecraft:block.sand.place", BLOCK),
+     BLOCK_SAND_STEP("minecraft:block.sand.step", BLOCK),
++    BLOCK_SHULKER_BOX_CLOSE("minecraft:block.shulker_box.close", BLOCK),
++    BLOCK_SHULKER_BOX_OPEN("minecraft:block.shulker_box.open", BLOCK),
+     BLOCK_SLIME_BREAK("minecraft:block.slime.break", BLOCK),
+     BLOCK_SLIME_FALL("minecraft:block.slime.fall", BLOCK),
+     BLOCK_SLIME_HIT("minecraft:block.slime.hit", BLOCK),
+@@ -184,6 +186,7 @@ public enum Sound {
+     ENTITY_ELDER_GUARDIAN_CURSE("minecraft:entity.elder_guardian.curse", HOSTILE),
+     ENTITY_ELDER_GUARDIAN_DEATH("minecraft:entity.elder_guardian.death", HOSTILE),
+     ENTITY_ELDER_GUARDIAN_DEATH_LAND("minecraft:entity.elder_guardian.death_land", HOSTILE),
++    ENTITY_ELDER_GUARDIAN_FLOP("minecraft:entity.elder_guardian.flop", HOSTILE),
+     ENTITY_ELDER_GUARDIAN_HURT("minecraft:entity.elder_guardian.hurt", HOSTILE),
+     ENTITY_ELDER_GUARDIAN_HURT_LAND("minecraft:entity.elder_guardian.hurt_land", HOSTILE),
+     ENTITY_ENDERDRAGON_AMBIENT("minecraft:entity.enderdragon.ambient", HOSTILE),
+@@ -205,9 +208,16 @@ public enum Sound {
+     ENTITY_ENDERMITE_HURT("minecraft:entity.endermite.hurt", HOSTILE),
+     ENTITY_ENDERMITE_STEP("minecraft:entity.endermite.step", HOSTILE),
+     ENTITY_ENDERPEARL_THROW("minecraft:entity.enderpearl.throw", NEUTRAL),
++    ENTITY_EVOCATION_FANGS_ATTACK("minecraft:entity.evocation_fangs.attack", HOSTILE),
++    ENTITY_EVOCATION_ILLAGER_AMBIENT("minecraft:entity.evocation_illager.ambient", HOSTILE),
++    ENTITY_EVOCATION_ILLAGER_CAST_SPELL("minecraft:entity.evocation_illager.cast_spell", HOSTILE),
++    ENTITY_EVOCATION_ILLAGER_DEATH("minecraft:entity.evocation_illager.death", HOSTILE),
++    ENTITY_EVOCATION_ILLAGER_HURT("minecraft:entity.evocation_illager.hurt", HOSTILE),
++    ENTITY_EVOCATION_ILLAGER_PREPARE_ATTACK("minecraft:entity.evocation_illager.prepare_attack", HOSTILE),
++    ENTITY_EVOCATION_ILLAGER_PREPARE_SUMMON("minecraft:entity.evocation_illager.prepare_summon", HOSTILE),
++    ENTITY_EVOCATION_ILLAGER_PREPARE_WOLOLO("minecraft:entity.evocation_illager.prepare_wololo", HOSTILE),
+     ENTITY_EXPERIENCE_BOTTLE_THROW("minecraft:entity.experience_bottle.throw", NEUTRAL),
+     ENTITY_EXPERIENCE_ORB_PICKUP("minecraft:entity.experience_orb.pickup", PLAYER),
+-    ENTITY_EXPERIENCE_ORB_TOUCH("minecraft:entity.experience_orb.touch", PLAYER),
+     ENTITY_FIREWORK_BLAST("minecraft:entity.firework.blast", NEUTRAL),
+     ENTITY_FIREWORK_BLAST_FAR("minecraft:entity.firework.blast_far", NEUTRAL),
+     ENTITY_FIREWORK_LARGE_BLAST("minecraft:entity.firework.large_blast", NEUTRAL),
+@@ -280,6 +290,15 @@ public enum Sound {
+     ENTITY_LIGHTNING_IMPACT("minecraft:entity.lightning.impact", WEATHER),
+     ENTITY_LIGHTNING_THUNDER("minecraft:entity.lightning.thunder", WEATHER),
+     ENTITY_LINGERINGPOTION_THROW("minecraft:entity.lingeringpotion.throw", NEUTRAL),
++    ENTITY_LLAMA_AMBIENT("minecraft:entity.llama.ambient", NEUTRAL),
++    ENTITY_LLAMA_ANGRY("minecraft:entity.llama.angry", NEUTRAL),
++    ENTITY_LLAMA_CHEST("minecraft:entity.llama.chest", NEUTRAL),
++    ENTITY_LLAMA_DEATH("minecraft:entity.llama.death", NEUTRAL),
++    ENTITY_LLAMA_EAT("minecraft:entity.llama.eat", NEUTRAL),
++    ENTITY_LLAMA_HURT("minecraft:entity.llama.hurt", NEUTRAL),
++    ENTITY_LLAMA_SPIT("minecraft:entity.llama.spit", NEUTRAL),
++    ENTITY_LLAMA_STEP("minecraft:entity.llama.step", NEUTRAL),
++    ENTITY_LLAMA_SWAG("minecraft:entity.llama.swag", NEUTRAL),
+     ENTITY_MAGMACUBE_DEATH("minecraft:entity.magmacube.death", HOSTILE),
+     ENTITY_MAGMACUBE_HURT("minecraft:entity.magmacube.hurt", HOSTILE),
+     ENTITY_MAGMACUBE_JUMP("minecraft:entity.magmacube.jump", HOSTILE),
+@@ -288,6 +307,7 @@ public enum Sound {
+     ENTITY_MINECART_RIDING("minecraft:entity.minecart.riding", NEUTRAL),
+     ENTITY_MOOSHROOM_SHEAR("minecraft:entity.mooshroom.shear", NEUTRAL),
+     ENTITY_MULE_AMBIENT("minecraft:entity.mule.ambient", NEUTRAL),
++    ENTITY_MULE_CHEST("minecraft:entity.mule.chest", NEUTRAL),
+     ENTITY_MULE_DEATH("minecraft:entity.mule.death", NEUTRAL),
+     ENTITY_MULE_HURT("minecraft:entity.mule.hurt", NEUTRAL),
+     ENTITY_PAINTING_BREAK("minecraft:entity.painting.break", NEUTRAL),
+@@ -411,6 +431,13 @@ public enum Sound {
+     ENTITY_WOLF_SHAKE("minecraft:entity.wolf.shake", NEUTRAL),
+     ENTITY_WOLF_STEP("minecraft:entity.wolf.step", NEUTRAL),
+     ENTITY_WOLF_WHINE("minecraft:entity.wolf.whine", NEUTRAL),
++    ENTITY_VEX_AMBIENT("minecraft:entity.vex.ambient", HOSTILE),
++    ENTITY_VEX_CHARGE("minecraft:entity.vex.charge", HOSTILE),
++    ENTITY_VEX_DEATH("minecraft:entity.vex.death", HOSTILE),
++    ENTITY_VEX_HURT("minecraft:entity.vex.hurt", HOSTILE),
++    ENTITY_VINDICATION_ILLAGER_AMBIENT("minecraft:entity.vindication_illager.ambient", HOSTILE),
++    ENTITY_VINDICATION_ILLAGER_DEATH("minecraft:entity.vindication_illager.death", HOSTILE),
++    ENTITY_VINDICATION_ILLAGER_HURT("minecraft:entity.vindication_illager.hurt", HOSTILE),
+     ENTITY_ZOMBIE_AMBIENT("minecraft:entity.zombie.ambient", HOSTILE),
+     ENTITY_ZOMBIE_ATTACK_DOOR_WOOD("minecraft:entity.zombie.attack_door_wood", HOSTILE),
+     ENTITY_ZOMBIE_ATTACK_IRON_DOOR("minecraft:entity.zombie.attack_iron_door", HOSTILE),
+@@ -434,10 +461,12 @@ public enum Sound {
+     ENTITY_ZOMBIE_VILLAGER_STEP("minecraft:entity.zombie_villager.step", HOSTILE),
+     ITEM_ARMOR_EQUIP_CHAIN("minecraft:item.armor.equip_chain", NEUTRAL),
+     ITEM_ARMOR_EQUIP_DIAMOND("minecraft:item.armor.equip_diamond", NEUTRAL),
++    ITEM_ARMOR_EQUIP_ELYTRA("minecraft:item.armor.equip_elytra", NEUTRAL),
+     ITEM_ARMOR_EQUIP_GENERIC("minecraft:item.armor.equip_generic", NEUTRAL),
+     ITEM_ARMOR_EQUIP_GOLD("minecraft:item.armor.equip_gold", NEUTRAL),
+     ITEM_ARMOR_EQUIP_IRON("minecraft:item.armor.equip_iron", NEUTRAL),
+     ITEM_ARMOR_EQUIP_LEATHER("minecraft:item.armor.equip_leather", NEUTRAL),
++    ITEM_BOTTLE_EMPTY("minecraft:item.bottle.empty", NEUTRAL),
+     ITEM_BOTTLE_FILL("minecraft:item.bottle.fill", NEUTRAL),
+     ITEM_BOTTLE_FILL_DRAGONBREATH("minecraft:item.bottle.fill_dragonbreath", NEUTRAL),
+     ITEM_BUCKET_EMPTY("minecraft:item.bucket.empty", NEUTRAL),
+@@ -452,6 +481,7 @@ public enum Sound {
+     ITEM_SHIELD_BLOCK("minecraft:item.shield.block", NEUTRAL),
+     ITEM_SHIELD_BREAK("minecraft:item.shield.break", NEUTRAL),
+     ITEM_SHOVEL_FLATTEN("minecraft:item.shovel.flatten", PLAYER),
++    ITEM_TOTEM_USE("minecraft:item.totem.use", PLAYER),
+     MUSIC_CREATIVE("minecraft:music.creative", MUSIC),
+     MUSIC_CREDITS("minecraft:music.credits", MUSIC),
+     MUSIC_DRAGON("minecraft:music.dragon", MUSIC),
+diff --git a/src/main/java/org/bukkit/entity/EntityType.java b/src/main/java/org/bukkit/entity/EntityType.java
+index 9ee4974..bbabc54 100644
+--- a/src/main/java/org/bukkit/entity/EntityType.java
++++ b/src/main/java/org/bukkit/entity/EntityType.java
+@@ -178,6 +178,7 @@ public enum EntityType {
+     RABBIT(Type.MOB, "Rabbit", Rabbit.class, "minecraft:rabbit", 101),
+     POLAR_BEAR(Type.MOB, "PolarBear", PolarBear.class, "minecraft:polar_bear", 102),
+     LLAMA(Type.MOB, "Llama", Llama.class, "minecraft:llama", 103),
++    LLAMA_SPIT(Type.OBJECT, "LlamaSpit", Llama.Spit.class, "minecraft:llama_spit", 104),
+     VILLAGER(Type.MOB, "Villager", Villager.class, "minecraft:villager", 120),
+     ENDER_CRYSTAL(Type.OBJECT, "EnderCrystal", EnderCrystal.class, "minecraft:ender_crystal", 200),
+     // These don't have an entity ID in nms.EntityTypes.
+diff --git a/src/main/java/org/bukkit/entity/Llama.java b/src/main/java/org/bukkit/entity/Llama.java
+index f5a14af..0eed431 100644
+--- a/src/main/java/org/bukkit/entity/Llama.java
++++ b/src/main/java/org/bukkit/entity/Llama.java
+@@ -35,4 +35,21 @@ public interface Llama extends ChestedHorse, Colorable {
+     public enum Variant {
+         BROWN, CREAMY, GRAY, WHITE
+     }
++
++    public interface Spit extends Entity {
++
++        /**
++         * The llama that owns this spit
++         *
++         * @return the llama that owns this spit
++         */
++        public Llama getSource();
++
++        /**
++         * Set the llama that owns this spit
++         *
++         * @param llama the llama that owns this spit
++         */
++        public void setSource(Llama llama);
++    }
+ }
+diff --git a/src/main/java/org/bukkit/entity/Villager.java b/src/main/java/org/bukkit/entity/Villager.java
+index 212f0ef..80f8265 100644
+--- a/src/main/java/org/bukkit/entity/Villager.java
++++ b/src/main/java/org/bukkit/entity/Villager.java
+@@ -54,7 +54,7 @@ public interface Villager extends Ageable, NPC, InventoryHolder {
+     /**
+      * Set the recipe at a certain index of this villager's trade list.
+      *
+-     * @param i the index
++     * @param i      the index
+      * @param recipe the recipe
+      * @throws IndexOutOfBoundsException thrown when the index is not within the bounds of the villager's trade list
+      */
+@@ -72,7 +72,7 @@ public interface Villager extends Ageable, NPC, InventoryHolder {
+      * <br>
+      * Note that this inventory is not the Merchant inventory, rather, it is the
+      * items that a villager might have collected (from harvesting crops, etc.)
+-     *
++     * <p>
+      * {@inheritDoc}
+      */
+     @Override
+@@ -104,9 +104,8 @@ public interface Villager extends Ageable, NPC, InventoryHolder {
+     /**
+      * Sets this villager's riches.
+      *
+-     * @see Villager#getRiches()
+-     *
+      * @param riches the new riches
++     * @see Villager#getRiches()
+      */
+     void setRiches(int riches);
+ 
+@@ -116,46 +115,28 @@ public interface Villager extends Ageable, NPC, InventoryHolder {
+      */
+     public enum Profession {
+         /**
+-         * Normal. <b>Reserved for Zombies.</b>
+-         */
+-        NORMAL(true),
+-        /**
+          * Farmer profession. Wears a brown robe.
+          */
+-        FARMER(false),
++        FARMER,
+         /**
+          * Librarian profession. Wears a white robe.
+          */
+-        LIBRARIAN(false),
++        LIBRARIAN,
+         /**
+          * Priest profession. Wears a purple robe.
+          */
+-        PRIEST(false),
++        PRIEST,
+         /**
+          * Blacksmith profession. Wears a black apron.
+          */
+-        BLACKSMITH(false),
++        BLACKSMITH,
+         /**
+          * Butcher profession. Wears a white apron.
+          */
+-        BUTCHER(false),
+-        /**
+-         * Husk. <b>Reserved for Zombies</b>
+-         */
+-        HUSK(true);
+-        private final boolean zombie;
+-
+-        private Profession(boolean zombie) {
+-            this.zombie = zombie;
+-        }
+-
++        BUTCHER,
+         /**
+-         * Returns if this profession can only be used by zombies.
+-         *
+-         * @return zombie profession status
++         * Nitwit profession. Wears a green robe.
+          */
+-        public boolean isZombie() {
+-            return zombie;
+-        }
++        NITWIT;
+     }
+ }
+diff --git a/src/main/java/org/bukkit/event/entity/HorseJumpEvent.java b/src/main/java/org/bukkit/event/entity/HorseJumpEvent.java
+index 510b662..21ebab6 100644
+--- a/src/main/java/org/bukkit/event/entity/HorseJumpEvent.java
++++ b/src/main/java/org/bukkit/event/entity/HorseJumpEvent.java
+@@ -1,6 +1,6 @@
+ package org.bukkit.event.entity;
+ 
+-import org.bukkit.entity.AbstractHorse.Horse;
++import org.bukkit.entity.Horse;
+ import org.bukkit.event.Cancellable;
+ import org.bukkit.event.HandlerList;
+ 
+-- 
+1.9.5.msysgit.1
+

@@ -1,36 +1,9 @@
-From 0396a700ac19b0a851811cc30881829294b43971 Mon Sep 17 00:00:00 2001
+From 8bd295ef7dd87fbba50d147f485cb8e4c06e4df4 Mon Sep 17 00:00:00 2001
 From: Momo <momo@momoperes.ca>
 Date: Thu, 11 Aug 2016 20:45:29 -0400
 Subject: [PATCH] Update to 16w40a
 
 
-diff --git a/pom.xml b/pom.xml
-index 7496b3d..428b4f7 100644
---- a/pom.xml
-+++ b/pom.xml
-@@ -1,4 +1,3 @@
--
- <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-     <modelVersion>4.0.0</modelVersion>
-@@ -13,7 +12,7 @@
- 
-     <groupId>net.glowstone</groupId>
-     <artifactId>glowkit</artifactId>
--    <version>1.10.2-R0.1-SNAPSHOT</version>
-+    <version>1.11-16w40a-R0.1-SNAPSHOT</version>
-     <packaging>jar</packaging>
- 
-     <name>Glowkit</name>
-@@ -56,7 +55,7 @@
- 
-         <repository>
-             <id>destroystokyo-releases</id>
--            <url>https://repo.destroystokyo.com/content/repositories/releases/</url>
-+            <url>http://ci.emc.gs/nexus/content/repositories/aikar/</url>
-         </repository>
-     </repositories>
- 
 diff --git a/src/main/java/org/bukkit/Material.java b/src/main/java/org/bukkit/Material.java
 index cd81663..8852a49 100644
 --- a/src/main/java/org/bukkit/Material.java

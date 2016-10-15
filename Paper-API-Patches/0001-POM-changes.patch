@@ -26,7 +26,8 @@ index 67807c1..111015b 100644
 -    <artifactId>paper-api</artifactId>
 +    <groupId>net.glowstone</groupId>
 +    <artifactId>glowkit</artifactId>
-     <version>1.10.2-R0.1-SNAPSHOT</version>
+-    <version>1.10.2-R0.1-SNAPSHOT</version>
++    <version>1.11-16w41a-R0.1-SNAPSHOT</version>
      <packaging>jar</packaging>
  
 -    <name>Paper-API</name>

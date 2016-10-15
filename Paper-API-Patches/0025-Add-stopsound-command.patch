@@ -1,4 +1,4 @@
-From 2e051c567bd82ffc87cb182a5d24859c67f70bf8 Mon Sep 17 00:00:00 2001
+From c7b41ace2a7bb332715acac89113b67e18e77a99 Mon Sep 17 00:00:00 2001
 From: Momo <momo@momoperes.ca>
 Date: Fri, 12 Aug 2016 18:47:44 -0400
 Subject: [PATCH] Add stopsound command
