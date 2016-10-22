@@ -1,0 +1,22 @@
+From 46238f1f5e266619dd9c0b89fbfe788cb0a6611f Mon Sep 17 00:00:00 2001
+From: momothereal <momo@momoperes.ca>
+Date: Sat, 22 Oct 2016 12:17:28 -0400
+Subject: [PATCH] Update to 16w42a
+
+
+diff --git a/pom.xml b/pom.xml
+index e04295f..445fab3 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -13,7 +13,7 @@
+ 
+     <groupId>net.glowstone</groupId>
+     <artifactId>glowkit</artifactId>
+-    <version>1.11-16w41a-R0.1-SNAPSHOT</version>
++    <version>1.11-16w42a-R0.1-SNAPSHOT</version>
+     <packaging>jar</packaging>
+ 
+     <name>Glowkit</name>
+-- 
+1.9.5.msysgit.1
+

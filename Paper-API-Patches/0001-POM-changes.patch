@@ -1,11 +1,11 @@
-From 5c83ac80ca621a0786d2fd298ac2b9416bbf2f89 Mon Sep 17 00:00:00 2001
+From 4dd66fd3832509a9cd815cf7ee68b2bfa044971b Mon Sep 17 00:00:00 2001
 From: kamcio96 <kamcio96@users.noreply.github.com>
 Date: Mon, 27 Jun 2016 17:15:15 +0200
 Subject: [PATCH] POM changes
 
 
 diff --git a/pom.xml b/pom.xml
-index 67807c1..111015b 100644
+index 9b43848..5ca9462 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -4,23 +4,23 @@
@@ -24,9 +24,9 @@ index 67807c1..111015b 100644
  
 -    <groupId>com.destroystokyo.paper</groupId>
 -    <artifactId>paper-api</artifactId>
+-    <version>1.10.2-R0.1-SNAPSHOT</version>
 +    <groupId>net.glowstone</groupId>
 +    <artifactId>glowkit</artifactId>
--    <version>1.10.2-R0.1-SNAPSHOT</version>
 +    <version>1.11-16w41a-R0.1-SNAPSHOT</version>
      <packaging>jar</packaging>
  
@@ -98,5 +98,5 @@ index 67807c1..111015b 100644
              <groupId>com.google.code.gson</groupId>
              <artifactId>gson</artifactId>
 -- 
-2.9.0.windows.1
+1.9.5.msysgit.1
 
