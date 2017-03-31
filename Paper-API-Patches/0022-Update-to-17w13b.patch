@@ -1,4 +1,4 @@
-From 353563964bfb4d6236f743d41135228cf383cefd Mon Sep 17 00:00:00 2001
+From 5aa5eee1a5cdc25d0553b373339de04d3e74fb81 Mon Sep 17 00:00:00 2001
 From: momothereal <momothereal.mc@gmail.com>
 Date: Fri, 31 Mar 2017 07:49:36 -0400
 Subject: [PATCH] Update to 17w13b
@@ -68,10 +68,10 @@ index a7686d5..f3930c1 100644
      // These don't have an entity ID in nms.EntityTypes.
 diff --git a/src/main/java/org/bukkit/entity/Parrot.java b/src/main/java/org/bukkit/entity/Parrot.java
 new file mode 100644
-index 0000000..d0dd782
+index 0000000..7196e96
 --- /dev/null
 +++ b/src/main/java/org/bukkit/entity/Parrot.java
-@@ -0,0 +1,20 @@
+@@ -0,0 +1,21 @@
 +package org.bukkit.entity;
 +
 +public interface Parrot extends Animals, Tameable {
@@ -81,6 +81,7 @@ index 0000000..d0dd782
 +        BLUE,
 +        GREEN,
 +        CYAN,
++        SILVER,
 +        ;
 +    }
 +
