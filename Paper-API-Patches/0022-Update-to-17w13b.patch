@@ -1,4 +1,4 @@
-From 5aa5eee1a5cdc25d0553b373339de04d3e74fb81 Mon Sep 17 00:00:00 2001
+From 880ee31b8d45a5aee46a0f4e621828f6317aac42 Mon Sep 17 00:00:00 2001
 From: momothereal <momothereal.mc@gmail.com>
 Date: Fri, 31 Mar 2017 07:49:36 -0400
 Subject: [PATCH] Update to 17w13b
@@ -54,6 +54,23 @@ index 1c28a70..3d8bfac 100644
      GOLD_RECORD(2256, 1),
      GREEN_RECORD(2257, 1),
      RECORD_3(2258, 1),
+diff --git a/src/main/java/org/bukkit/Sound.java b/src/main/java/org/bukkit/Sound.java
+index 392e953..aa4ceef 100644
+--- a/src/main/java/org/bukkit/Sound.java
++++ b/src/main/java/org/bukkit/Sound.java
+@@ -312,6 +312,12 @@ public enum Sound {
+     ENTITY_MULE_HURT("minecraft:entity.mule.hurt", NEUTRAL),
+     ENTITY_PAINTING_BREAK("minecraft:entity.painting.break", NEUTRAL),
+     ENTITY_PAINTING_PLACE("minecraft:entity.painting.place", NEUTRAL),
++    ENTITY_PARROT_AMBIENT("minecraft:entity.parrot.ambient", NEUTRAL),
++    ENTITY_PARROT_DEATH("minecraft:entity.parrot.death", NEUTRAL),
++    ENTITY_PARROT_EAT("minecraft:entity.parrot.eat", NEUTRAL),
++    ENTITY_PARROT_FLY("minecraft:entity.parrot.fly", NEUTRAL),
++    ENTITY_PARROT_HURT("minecraft:entity.parrot.hurt", NEUTRAL),
++    ENTITY_PARROT_STEP("minecraft:entity.parrot.step", NEUTRAL),
+     ENTITY_PIG_AMBIENT("minecraft:entity.pig.ambient", NEUTRAL),
+     ENTITY_PIG_DEATH("minecraft:entity.pig.death", NEUTRAL),
+     ENTITY_PIG_HURT("minecraft:entity.pig.hurt", NEUTRAL),
 diff --git a/src/main/java/org/bukkit/entity/EntityType.java b/src/main/java/org/bukkit/entity/EntityType.java
 index a7686d5..f3930c1 100644
 --- a/src/main/java/org/bukkit/entity/EntityType.java
@@ -68,10 +85,10 @@ index a7686d5..f3930c1 100644
      // These don't have an entity ID in nms.EntityTypes.
 diff --git a/src/main/java/org/bukkit/entity/Parrot.java b/src/main/java/org/bukkit/entity/Parrot.java
 new file mode 100644
-index 0000000..7196e96
+index 0000000..61bd6c1
 --- /dev/null
 +++ b/src/main/java/org/bukkit/entity/Parrot.java
-@@ -0,0 +1,21 @@
+@@ -0,0 +1,17 @@
 +package org.bukkit.entity;
 +
 +public interface Parrot extends Animals, Tameable {
@@ -84,10 +101,6 @@ index 0000000..7196e96
 +        SILVER,
 +        ;
 +    }
-+
-+    public boolean isSitting();
-+
-+    public void setSitting(boolean sitting);
 +
 +    public Parrot.Variant getVariant();
 +
