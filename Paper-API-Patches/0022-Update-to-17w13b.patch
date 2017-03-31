@@ -1,0 +1,97 @@
+From 353563964bfb4d6236f743d41135228cf383cefd Mon Sep 17 00:00:00 2001
+From: momothereal <momothereal.mc@gmail.com>
+Date: Fri, 31 Mar 2017 07:49:36 -0400
+Subject: [PATCH] Update to 17w13b
+
+
+diff --git a/pom.xml b/pom.xml
+index 12963c0..b64e462 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -12,7 +12,7 @@
+ 
+     <groupId>net.glowstone</groupId>
+     <artifactId>glowkit</artifactId>
+-    <version>1.11.2-R0.1-SNAPSHOT</version>
++    <version>1.12-17w13b-R0.1-SNAPSHOT</version>
+     <packaging>jar</packaging>
+ 
+     <name>Glowkit</name>
+diff --git a/src/main/java/org/bukkit/Material.java b/src/main/java/org/bukkit/Material.java
+index 1c28a70..3d8bfac 100644
+--- a/src/main/java/org/bukkit/Material.java
++++ b/src/main/java/org/bukkit/Material.java
+@@ -253,6 +253,24 @@ public enum Material {
+     GREEN_SHULKER_BOX(232, 1),
+     RED_SHULKER_BOX(233, 1),
+     BLACK_SHULKER_BOX(234, 1),
++    WHITE_GLAZED_TERRACOTTA(235, 1),
++    ORANGE_GLAZED_TERRACOTTA(236, 1),
++    MAGENTA_GLAZED_TERRACOTTA(237, 1),
++    LIGHT_BLUE_GLAZED_TERRACOTTA(238, 1),
++    YELLOW_GLAZED_TERRACOTTA(239, 1),
++    LIME_GLAZED_TERRACOTTA(240, 1),
++    PINK_GLAZED_TERRACOTTA(241, 1),
++    GRAY_GLAZED_TERRACOTTA(242, 1),
++    SILVER_GLAZED_TERRACOTTA(243, 1),
++    CYAN_GLAZED_TERRACOTTA(244, 1),
++    PURPLE_GLAZED_TERRACOTTA(245, 1),
++    BLUE_GLAZED_TERRACOTTA(246, 1),
++    BROWN_GLAZED_TERRACOTTA(247, 1),
++    GREEN_GLAZED_TERRACOTTA(248, 1),
++    RED_GLAZED_TERRACOTTA(249, 1),
++    BLACK_GLAZED_TERRACOTTA(250, 1),
++    CONCRETE(251),
++    CONCRETE_POWDER(252),
+     STRUCTURE_BLOCK(255),
+     // ----- Item Separator -----
+     IRON_SPADE(256, 1, 250),
+@@ -454,6 +472,7 @@ public enum Material {
+     TOTEM(449, 1),
+     SHULKER_SHELL(450),
+     IRON_NUGGET(452),
++    KNOWLEDGE_BOOK(453),
+     GOLD_RECORD(2256, 1),
+     GREEN_RECORD(2257, 1),
+     RECORD_3(2258, 1),
+diff --git a/src/main/java/org/bukkit/entity/EntityType.java b/src/main/java/org/bukkit/entity/EntityType.java
+index a7686d5..f3930c1 100644
+--- a/src/main/java/org/bukkit/entity/EntityType.java
++++ b/src/main/java/org/bukkit/entity/EntityType.java
+@@ -232,6 +232,7 @@ public enum EntityType {
+     POLAR_BEAR("polar_bear", PolarBear.class, 102),
+     LLAMA("llama", Llama.class, 103),
+     LLAMA_SPIT("llama_spit", LlamaSpit.class, 104),
++    PARROT("parrot", Parrot.class, 105),
+     VILLAGER("villager", Villager.class, 120),
+     ENDER_CRYSTAL("ender_crystal", EnderCrystal.class, 200),
+     // These don't have an entity ID in nms.EntityTypes.
+diff --git a/src/main/java/org/bukkit/entity/Parrot.java b/src/main/java/org/bukkit/entity/Parrot.java
+new file mode 100644
+index 0000000..d0dd782
+--- /dev/null
++++ b/src/main/java/org/bukkit/entity/Parrot.java
+@@ -0,0 +1,20 @@
++package org.bukkit.entity;
++
++public interface Parrot extends Animals, Tameable {
++
++    public enum Variant {
++        RED,
++        BLUE,
++        GREEN,
++        CYAN,
++        ;
++    }
++
++    public boolean isSitting();
++
++    public void setSitting(boolean sitting);
++
++    public Parrot.Variant getVariant();
++
++    public void setVariant(Parrot.Variant variant);
++}
+-- 
+2.10.2.windows.1
+
