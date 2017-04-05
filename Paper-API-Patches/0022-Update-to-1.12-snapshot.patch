@@ -1,4 +1,4 @@
-From 08e1d2d6e8f998cf9ca296ba00fd45b9a1dba010 Mon Sep 17 00:00:00 2001
+From ea7a372c8e4d10763cc76c510c64b72e71485727 Mon Sep 17 00:00:00 2001
 From: momothereal <momothereal.mc@gmail.com>
 Date: Fri, 31 Mar 2017 07:49:36 -0400
 Subject: [PATCH] Update to 1.12 snapshot
@@ -368,34 +368,6 @@ index 56ec8229..46b690e7 100644
  public class AchievementCommand extends VanillaCommand {
      public AchievementCommand() {
          super("achievement");
-diff --git a/src/main/java/org/bukkit/command/defaults/TriggerCommand.java b/src/main/java/org/bukkit/command/defaults/TriggerCommand.java
-index 50421943..8715d62a 100644
---- a/src/main/java/org/bukkit/command/defaults/TriggerCommand.java
-+++ b/src/main/java/org/bukkit/command/defaults/TriggerCommand.java
-@@ -49,7 +49,7 @@ public class TriggerCommand extends VanillaCommand {
-         }
- 
-         if (objective.getScore(player.getName()).getLocked()) {
--            sender.sendMessage(ChatColor.RED + "Trigger " + objective.getName() + " is not enabled");
-+            sender.sendMessage(ChatColor.RED + "Criteria " + objective.getName() + " is not enabled");
-             return false;
-         }
- 
-@@ -67,12 +67,12 @@ public class TriggerCommand extends VanillaCommand {
-         if (args[1].equalsIgnoreCase("add")) {
-             score.setScore(score.getScore() + value);
-             score.setLocked(true);
--            sender.sendMessage("Trigger " + args[0] + " changed with add " + value);
-+            sender.sendMessage("Criteria " + args[0] + " changed with add " + value);
-             return true;
-         } else if (args[1].equalsIgnoreCase("set")) {
-             score.setScore(value);
-             score.setLocked(true);
--            sender.sendMessage("Trigger " + args[0] + " changed with set " + value);
-+            sender.sendMessage("Criteria " + args[0] + " changed with set " + value);
-             return true;
-         }
-         sender.sendMessage("Invalid trigger mode " + args[1]);
 diff --git a/src/main/java/org/bukkit/entity/EntityType.java b/src/main/java/org/bukkit/entity/EntityType.java
 index a7686d52..f3930c1b 100644
 --- a/src/main/java/org/bukkit/entity/EntityType.java
@@ -445,7 +417,7 @@ index 00000000..2b9cde14
 +    public Player setSittingOn(Player player, Shoulder shoulder);
 +}
 diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
-index f7c68c34..8ad5d0f5 100644
+index f7c68c34..94da674d 100644
 --- a/src/main/java/org/bukkit/entity/Player.java
 +++ b/src/main/java/org/bukkit/entity/Player.java
 @@ -1,29 +1,19 @@
@@ -546,40 +518,27 @@ index f7c68c34..8ad5d0f5 100644
      public boolean hasAchievement(Achievement achievement);
  
      /**
-@@ -1337,6 +1360,52 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+@@ -1337,6 +1360,39 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
      public void setSpectatorTarget(Entity entity);
  
      /**
-+     * Gets the entity on this player's left shoulder.
++     * Gets the entity on this player's specified shoulder.
 +     *
-+     * @return The entity, or null if there is no entity on this shoulder
++     * @param shoulder The shoulder
++     *
++     * @return The entity, or null if there is no entity on the shoulder
 +     */
-+    public Entity getLeftShoulderEntity();
++    public Entity getShoulderEntity(Parrot.Shoulder shoulder);
 +
 +    /**
-+     * Gets the entity on this player's left shoulder.
-+     *
-+     * @return The entity, or null if there is no entity on this shoulder
-+     */
-+    public Entity getRightShoulderEntity();
-+
-+    /**
-+     * Moves the specified entity to this player's left shoulder.
++     * Moves the specified entity to this player's specified shoulder.
 +     *
 +     * The entity will always be displayed as a parrot.
 +     *
 +     * @param entity The entity, or null to dismount the entity
++     * @param shoulder The shoulder
 +     */
-+    public void setLeftShoulderEntity(Entity entity);
-+
-+    /**
-+     * Moves the specified entity to this player's right shoulder.
-+     *
-+     * The entity will always be displayed as a parrot.
-+     *
-+     * @param entity The entity, or null to dismount the entity
-+     */
-+    public void setRightShoulderEntity(Entity entity);
++    public void setShoulderEntity(Entity entity, Parrot.Shoulder shoulder);
 +
 +    /**
 +     * Gets if this player has left the End through the portal and has thus seen the credits.
