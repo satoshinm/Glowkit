@@ -1,0 +1,713 @@
+From a14fbf04a5af41c2d6db3b1026a1424bf5567b7f Mon Sep 17 00:00:00 2001
+From: momothereal <momothereal.mc@gmail.com>
+Date: Fri, 31 Mar 2017 07:49:36 -0400
+Subject: [PATCH] Update to 17w14a
+
+
+diff --git a/pom.xml b/pom.xml
+index 12963c0d..87690326 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -12,7 +12,7 @@
+ 
+     <groupId>net.glowstone</groupId>
+     <artifactId>glowkit</artifactId>
+-    <version>1.11.2-R0.1-SNAPSHOT</version>
++    <version>1.12-17w14a-R0.1-SNAPSHOT</version>
+     <packaging>jar</packaging>
+ 
+     <name>Glowkit</name>
+@@ -92,12 +92,12 @@
+         <dependency>
+             <groupId>com.google.guava</groupId>
+             <artifactId>guava</artifactId>
+-            <version>17.0</version>
++            <version>21.0</version>
+         </dependency>
+         <dependency>
+             <groupId>com.google.code.gson</groupId>
+             <artifactId>gson</artifactId>
+-            <version>2.2.4</version>
++            <version>2.8.0</version>
+         </dependency>
+         <dependency>
+             <groupId>org.avaje</groupId>
+diff --git a/src/main/java/com/destroystokyo/paper/loottable/Lootable.java b/src/main/java/com/destroystokyo/paper/loottable/Lootable.java
+index d962a0ce..651aeea7 100644
+--- a/src/main/java/com/destroystokyo/paper/loottable/Lootable.java
++++ b/src/main/java/com/destroystokyo/paper/loottable/Lootable.java
+@@ -6,6 +6,9 @@ package com.destroystokyo.paper.loottable;
+  * How the Loot Table and seed are used may vary based on Minecraft Versions
+  * and what type of object is using the Loot Table
+  */
++
++// TODO: expose loot table info
++
+ public interface Lootable {
+ 
+     /**
+diff --git a/src/main/java/org/bukkit/Achievement.java b/src/main/java/org/bukkit/Achievement.java
+index ee874ee6..4e0da12f 100644
+--- a/src/main/java/org/bukkit/Achievement.java
++++ b/src/main/java/org/bukkit/Achievement.java
+@@ -2,7 +2,10 @@ package org.bukkit;
+ 
+ /**
+  * Represents an achievement, which may be given to players.
++ *
++ * @deprecated Achievements do not exist anymore, use {@link org.bukkit.advancement.Advancement}s.
+  */
++@Deprecated
+ public enum Achievement {
+     OPEN_INVENTORY,
+     MINE_WOOD (OPEN_INVENTORY),
+@@ -54,7 +57,9 @@ public enum Achievement {
+      * Returns whether or not this achievement has a parent achievement.
+      * 
+      * @return whether the achievement has a parent achievement
++     * @deprecated @see Achievement
+      */
++    @Deprecated
+     public boolean hasParent() {
+         return parent != null;
+     }
+@@ -63,7 +68,9 @@ public enum Achievement {
+      * Returns the parent achievement of this achievement, or null if none.
+      * 
+      * @return the parent achievement or null
++     * @deprecated @see Achievement
+      */
++    @Deprecated
+     public Achievement getParent() {
+         return parent;
+     }
+diff --git a/src/main/java/org/bukkit/Material.java b/src/main/java/org/bukkit/Material.java
+index 1c28a70d..3d8bfacc 100644
+--- a/src/main/java/org/bukkit/Material.java
++++ b/src/main/java/org/bukkit/Material.java
+@@ -253,6 +253,24 @@ public enum Material {
+     GREEN_SHULKER_BOX(232, 1),
+     RED_SHULKER_BOX(233, 1),
+     BLACK_SHULKER_BOX(234, 1),
++    WHITE_GLAZED_TERRACOTTA(235, 1),
++    ORANGE_GLAZED_TERRACOTTA(236, 1),
++    MAGENTA_GLAZED_TERRACOTTA(237, 1),
++    LIGHT_BLUE_GLAZED_TERRACOTTA(238, 1),
++    YELLOW_GLAZED_TERRACOTTA(239, 1),
++    LIME_GLAZED_TERRACOTTA(240, 1),
++    PINK_GLAZED_TERRACOTTA(241, 1),
++    GRAY_GLAZED_TERRACOTTA(242, 1),
++    SILVER_GLAZED_TERRACOTTA(243, 1),
++    CYAN_GLAZED_TERRACOTTA(244, 1),
++    PURPLE_GLAZED_TERRACOTTA(245, 1),
++    BLUE_GLAZED_TERRACOTTA(246, 1),
++    BROWN_GLAZED_TERRACOTTA(247, 1),
++    GREEN_GLAZED_TERRACOTTA(248, 1),
++    RED_GLAZED_TERRACOTTA(249, 1),
++    BLACK_GLAZED_TERRACOTTA(250, 1),
++    CONCRETE(251),
++    CONCRETE_POWDER(252),
+     STRUCTURE_BLOCK(255),
+     // ----- Item Separator -----
+     IRON_SPADE(256, 1, 250),
+@@ -454,6 +472,7 @@ public enum Material {
+     TOTEM(449, 1),
+     SHULKER_SHELL(450),
+     IRON_NUGGET(452),
++    KNOWLEDGE_BOOK(453),
+     GOLD_RECORD(2256, 1),
+     GREEN_RECORD(2257, 1),
+     RECORD_3(2258, 1),
+diff --git a/src/main/java/org/bukkit/Sound.java b/src/main/java/org/bukkit/Sound.java
+index 392e9534..aa4ceef1 100644
+--- a/src/main/java/org/bukkit/Sound.java
++++ b/src/main/java/org/bukkit/Sound.java
+@@ -312,6 +312,12 @@ public enum Sound {
+     ENTITY_MULE_HURT("minecraft:entity.mule.hurt", NEUTRAL),
+     ENTITY_PAINTING_BREAK("minecraft:entity.painting.break", NEUTRAL),
+     ENTITY_PAINTING_PLACE("minecraft:entity.painting.place", NEUTRAL),
++    ENTITY_PARROT_AMBIENT("minecraft:entity.parrot.ambient", NEUTRAL),
++    ENTITY_PARROT_DEATH("minecraft:entity.parrot.death", NEUTRAL),
++    ENTITY_PARROT_EAT("minecraft:entity.parrot.eat", NEUTRAL),
++    ENTITY_PARROT_FLY("minecraft:entity.parrot.fly", NEUTRAL),
++    ENTITY_PARROT_HURT("minecraft:entity.parrot.hurt", NEUTRAL),
++    ENTITY_PARROT_STEP("minecraft:entity.parrot.step", NEUTRAL),
+     ENTITY_PIG_AMBIENT("minecraft:entity.pig.ambient", NEUTRAL),
+     ENTITY_PIG_DEATH("minecraft:entity.pig.death", NEUTRAL),
+     ENTITY_PIG_HURT("minecraft:entity.pig.hurt", NEUTRAL),
+diff --git a/src/main/java/org/bukkit/UnsafeValues.java b/src/main/java/org/bukkit/UnsafeValues.java
+index 568c83e3..141d68d2 100644
+--- a/src/main/java/org/bukkit/UnsafeValues.java
++++ b/src/main/java/org/bukkit/UnsafeValues.java
+@@ -1,9 +1,9 @@
+ package org.bukkit;
+ 
+-import java.util.List;
+-
+ import org.bukkit.inventory.ItemStack;
+ 
++import java.util.List;
++
+ /**
+  * This interface provides value conversions that may be specific to a
+  * runtime, or have arbitrary meaning (read: magic values).
+@@ -27,6 +27,7 @@ public interface UnsafeValues {
+ 
+     Statistic getStatisticFromInternalName(String name);
+ 
++    @Deprecated
+     Achievement getAchievementFromInternalName(String name);
+ 
+     List<String> tabCompleteInternalStatisticOrAchievementName(String token, List<String> completions);
+diff --git a/src/main/java/org/bukkit/advancement/Advancement.java b/src/main/java/org/bukkit/advancement/Advancement.java
+new file mode 100644
+index 00000000..33bbed9d
+--- /dev/null
++++ b/src/main/java/org/bukkit/advancement/Advancement.java
+@@ -0,0 +1,132 @@
++package org.bukkit.advancement;
++
++import com.destroystokyo.paper.loottable.Lootable;
++import org.bukkit.Material;
++import org.bukkit.inventory.Recipe;
++
++import java.util.Collection;
++
++public interface Advancement {
++
++    /**
++     * The type of advancement icon frame
++     */
++    enum Frame {
++        /**
++         * The default tile
++         */
++        TASK,
++        /**
++         * A tile with a spiked border
++         */
++        CHALLENGE,
++        /**
++         * A tile with a rounded border
++         */
++        GOAL,
++        ;
++    }
++
++    /**
++     * Creates a new root advancement
++     *
++     * @param background The file to use for the background
++     * @param criteria The criteria
++     * @return The new advancement
++     */
++    Advancement of(String background, Criteria... criteria);
++
++    /**
++     * Creates a child advancement
++     *
++     * @param parent The parent of this advancement
++     * @param criteria The criteria
++     * @return The new advancement
++     */
++    Advancement of(Advancement parent, Criteria... criteria);
++
++    /**
++     * The material used to produce the advancement icon
++     *
++     * @return The material, or null
++     */
++    Material getIcon();
++    Advancement setIcon(Material material);
++
++    /**
++     * The title for this advancement
++     *
++     * @return The title, or null
++     */
++    String getTitle();
++    Advancement setTitle(String title);
++
++    /**
++     * The frame type this advancement uses
++     * @return The frame type, or null for not specified
++     */
++    Frame getFrame();
++    Advancement setFrame(Frame frame);
++
++    /**
++     * The file path for the background of this advancement, for root advancements only
++     *
++     * @return The file path, or null if not a root advancement
++     */
++    String getBackground();
++    Advancement setBackground(String background);
++
++    /**
++     * The parent advancement, for child advancements only
++     *
++     * @return The parent, or null if a root advancement
++     */
++    Advancement getParent();
++    Advancement setParent(Advancement advancement);
++
++    /**
++     * The criteria for this advancement
++     *
++     * @return The criteria
++     */
++    Collection<Criteria> getCriteria();
++    Advancement addCriteria(Criteria criteria);
++    Advancement removeCriteria(Criteria criteria);
++
++    /**
++     * The combinations of criteria required to complete the advancement
++     *
++     * @return The lists of criteria
++     */
++    Collection<Collection<Criteria>> getRequirements();
++    Advancement addRequirement(Collection<Criteria> requirement);
++    Advancement removeRequirement(Collection<Criteria> requirement);
++    Advancement addCriteriaRequirement(Collection<Criteria> requirement, Criteria criteria);
++    Advancement removeCriteriaRequirement(Collection<Criteria> requirement, Criteria criteria);
++
++    /**
++     * Gets the recipes the player will learn as a reward for completing this advancement
++     *
++     * @return The recipes
++     */
++    Collection<Recipe> getRecipeRewards();
++    Advancement addRecipeReward(Recipe recipe);
++    Advancement removeRecipeReward(Recipe recipe);
++
++    /**
++     * Gets the loot the player will receive for completing this advancement
++     *
++     * @return The loot table to use for loot rewards
++     */
++    Collection<Lootable> getLootRewards();
++    Advancement addLootReward(Lootable loot);
++    Advancement removeLootReward(Lootable loot);
++
++    /**
++     * The xp the player will receive for completing this advancement
++     *
++     * @return The amount of xp
++     */
++    int getXpReward();
++    Advancement setXpReward(int xp);
++}
+diff --git a/src/main/java/org/bukkit/advancement/Criteria.java b/src/main/java/org/bukkit/advancement/Criteria.java
+new file mode 100644
+index 00000000..4fd77231
+--- /dev/null
++++ b/src/main/java/org/bukkit/advancement/Criteria.java
+@@ -0,0 +1,53 @@
++package org.bukkit.advancement;
++
++import com.destroystokyo.paper.event.block.BeaconEffectEvent;
++import org.bukkit.event.Event;
++import org.bukkit.event.enchantment.EnchantItemEvent;
++import org.bukkit.event.entity.*;
++import org.bukkit.event.inventory.BrewEvent;
++import org.bukkit.event.inventory.InventoryEvent;
++import org.bukkit.event.player.*;
++
++import java.util.Collection;
++import java.util.function.Predicate;
++
++public interface Criteria<T> {
++
++    // TODO: specify vanilla conditions like we did for triggers
++    Criteria<T> of(String name, Trigger type, Predicate<T>... conditions);
++    Trigger getType();
++    String getName();
++    Collection<Predicate<T>> getConditions();
++
++    // TODO: improve descriptors for triggers
++    class Trigger {
++        public static final Trigger BREED = new Trigger(EntityBreedEvent.class);
++        public static final Trigger BREW = new Trigger(BrewEvent.class);
++        public static final Trigger BEACON = new Trigger(BeaconEffectEvent.class); // TODO: new event for changing beacon structure
++        public static final Trigger CURE = new Trigger(Event.class); // TODO: cure zombie villager event
++        public static final Trigger ENCHANT = new Trigger(EnchantItemEvent.class);
++        public static final Trigger ENTER = new Trigger(PlayerPortalEvent.class);
++        public static final Trigger IMPOSSIBLE = new Trigger(PlayerCommandPreprocessEvent.class);
++        public static final Trigger INVENTORY = new Trigger(InventoryEvent.class);
++        public static final Trigger LOCATION = new Trigger(PlayerMoveEvent.class);
++        public static final Trigger DAMAGE = new Trigger(EntityDamageEvent.class); // TODO: filter to player
++        public static final Trigger HURT = new Trigger(EntityDamageByEntityEvent.class); // TODO: filter to player
++        public static final Trigger KILL_BY = new Trigger(EntityDamageByEntityEvent.class); // TODO: filter to player
++        public static final Trigger KILL_OTHER = new Trigger(EntityDamageByEntityEvent.class); // TODO: filter to player
++        public static final Trigger RECIPE = new Trigger(PlayerLearnRecipeEvent.class);
++        public static final Trigger SLEEP = new Trigger(PlayerBedEnterEvent.class);
++        public static final Trigger SUMMON = new Trigger(EntitySpawnEvent.class); // TODO: filter to player summons
++        public static final Trigger ENDER_EYE = new Trigger(PlayerInteractEvent.class); // TODO: ender eye event?
++        public static final Trigger TRADE = new Trigger(VillagerReplenishTradeEvent.class);
++
++        private Class<? extends Event> event;
++
++        public Trigger(Class<? extends Event> event) {
++            this.event = event;
++        }
++
++        public Class<? extends Event> getEvent() {
++            return event;
++        }
++    }
++}
+diff --git a/src/main/java/org/bukkit/command/defaults/AchievementCommand.java b/src/main/java/org/bukkit/command/defaults/AchievementCommand.java
+index 56ec8229..46b690e7 100644
+--- a/src/main/java/org/bukkit/command/defaults/AchievementCommand.java
++++ b/src/main/java/org/bukkit/command/defaults/AchievementCommand.java
+@@ -15,6 +15,7 @@ import java.util.ArrayList;
+ import java.util.Arrays;
+ import java.util.List;
+ 
++@Deprecated
+ public class AchievementCommand extends VanillaCommand {
+     public AchievementCommand() {
+         super("achievement");
+diff --git a/src/main/java/org/bukkit/command/defaults/TriggerCommand.java b/src/main/java/org/bukkit/command/defaults/TriggerCommand.java
+index 50421943..8715d62a 100644
+--- a/src/main/java/org/bukkit/command/defaults/TriggerCommand.java
++++ b/src/main/java/org/bukkit/command/defaults/TriggerCommand.java
+@@ -49,7 +49,7 @@ public class TriggerCommand extends VanillaCommand {
+         }
+ 
+         if (objective.getScore(player.getName()).getLocked()) {
+-            sender.sendMessage(ChatColor.RED + "Trigger " + objective.getName() + " is not enabled");
++            sender.sendMessage(ChatColor.RED + "Criteria " + objective.getName() + " is not enabled");
+             return false;
+         }
+ 
+@@ -67,12 +67,12 @@ public class TriggerCommand extends VanillaCommand {
+         if (args[1].equalsIgnoreCase("add")) {
+             score.setScore(score.getScore() + value);
+             score.setLocked(true);
+-            sender.sendMessage("Trigger " + args[0] + " changed with add " + value);
++            sender.sendMessage("Criteria " + args[0] + " changed with add " + value);
+             return true;
+         } else if (args[1].equalsIgnoreCase("set")) {
+             score.setScore(value);
+             score.setLocked(true);
+-            sender.sendMessage("Trigger " + args[0] + " changed with set " + value);
++            sender.sendMessage("Criteria " + args[0] + " changed with set " + value);
+             return true;
+         }
+         sender.sendMessage("Invalid trigger mode " + args[1]);
+diff --git a/src/main/java/org/bukkit/entity/EntityType.java b/src/main/java/org/bukkit/entity/EntityType.java
+index a7686d52..f3930c1b 100644
+--- a/src/main/java/org/bukkit/entity/EntityType.java
++++ b/src/main/java/org/bukkit/entity/EntityType.java
+@@ -232,6 +232,7 @@ public enum EntityType {
+     POLAR_BEAR("polar_bear", PolarBear.class, 102),
+     LLAMA("llama", Llama.class, 103),
+     LLAMA_SPIT("llama_spit", LlamaSpit.class, 104),
++    PARROT("parrot", Parrot.class, 105),
+     VILLAGER("villager", Villager.class, 120),
+     ENDER_CRYSTAL("ender_crystal", EnderCrystal.class, 200),
+     // These don't have an entity ID in nms.EntityTypes.
+diff --git a/src/main/java/org/bukkit/entity/Parrot.java b/src/main/java/org/bukkit/entity/Parrot.java
+new file mode 100644
+index 00000000..2b9cde14
+--- /dev/null
++++ b/src/main/java/org/bukkit/entity/Parrot.java
+@@ -0,0 +1,30 @@
++package org.bukkit.entity;
++
++public interface Parrot extends Animals, Tameable {
++
++    public enum Variant {
++        RED,
++        BLUE,
++        GREEN,
++        CYAN,
++        GRAY,
++        ;
++    }
++
++    public enum Shoulder {
++        LEFT,
++        RIGHT
++    }
++
++    public Parrot.Variant getVariant();
++
++    public void setVariant(Parrot.Variant variant);
++
++    public LivingEntity getImitatedEntity();
++
++    public void setImitatedEntity(LivingEntity entity);
++
++    public Player getSittingOn();
++
++    public Player setSittingOn(Player player, Shoulder shoulder);
++}
+diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
+index f7c68c34..8ad5d0f5 100644
+--- a/src/main/java/org/bukkit/entity/Player.java
++++ b/src/main/java/org/bukkit/entity/Player.java
+@@ -1,29 +1,19 @@
+ package org.bukkit.entity;
+ 
+-import java.net.InetSocketAddress;
+-
+ import com.destroystokyo.paper.Title;
+-import org.bukkit.Achievement;
+-import org.bukkit.ChatColor;
+-import org.bukkit.Effect;
+-import org.bukkit.GameMode;
+-import org.bukkit.Instrument;
+-import org.bukkit.Location;
+-import org.bukkit.Material;
+-import org.bukkit.Note;
+-import org.bukkit.OfflinePlayer;
+-import org.bukkit.Particle;
+-import org.bukkit.Sound;
+-import org.bukkit.SoundCategory;
+-import org.bukkit.Statistic;
+-import org.bukkit.WeatherType;
++import org.bukkit.*;
++import org.bukkit.advancement.Advancement;
+ import org.bukkit.command.CommandSender;
+ import org.bukkit.conversations.Conversable;
+ import org.bukkit.event.player.PlayerResourcePackStatusEvent;
++import org.bukkit.inventory.Recipe;
+ import org.bukkit.map.MapView;
+ import org.bukkit.plugin.messaging.PluginMessageRecipient;
+ import org.bukkit.scoreboard.Scoreboard;
+ 
++import java.net.InetSocketAddress;
++import java.util.Collection;
++
+ /**
+  * Represents a player, connected or not
+  */
+@@ -583,12 +573,41 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+     public void updateInventory();
+ 
+     /**
++     * Grants the given advancement and any parent advancements that the
++     * player does not have.
++     *
++     * @param advancement Advancement to grant
++     * @throws IllegalArgumentException if advancement is null
++     */
++    public void grantAdvancement(Advancement advancement);
++
++    /**
++     * Revokes the given advancement and any children advancements that the
++     * player has.
++     *
++     * @param advancement Advancement to revoke
++     * @throws IllegalArgumentException if advancement is null
++     */
++    public void revokeAdvancement(Advancement advancement);
++
++    /**
++     * Gets whether this player has the given advancement.
++     *
++     * @param advancement the advancement to check
++     * @return whether the player has the advancement
++     * @throws IllegalArgumentException if advancement is null
++     */
++    public boolean hasAdvancement(Advancement advancement);
++
++    /**
+      * Awards the given achievement and any parent achievements that the
+      * player does not have.
+      *
+      * @param achievement Achievement to award
+      * @throws IllegalArgumentException if achievement is null
++     * @deprecated @see Achievement
+      */
++    @Deprecated
+     public void awardAchievement(Achievement achievement);
+ 
+     /**
+@@ -597,7 +616,9 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      *
+      * @param achievement Achievement to remove
+      * @throws IllegalArgumentException if achievement is null
++     * @deprecated @see Achievement
+      */
++    @Deprecated
+     public void removeAchievement(Achievement achievement);
+ 
+     /**
+@@ -606,7 +627,9 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * @param achievement the achievement to check
+      * @return whether the player has the achievement
+      * @throws IllegalArgumentException if achievement is null
++     * @deprecated @see Achievement
+      */
++    @Deprecated
+     public boolean hasAchievement(Achievement achievement);
+ 
+     /**
+@@ -1337,6 +1360,52 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+     public void setSpectatorTarget(Entity entity);
+ 
+     /**
++     * Gets the entity on this player's left shoulder.
++     *
++     * @return The entity, or null if there is no entity on this shoulder
++     */
++    public Entity getLeftShoulderEntity();
++
++    /**
++     * Gets the entity on this player's left shoulder.
++     *
++     * @return The entity, or null if there is no entity on this shoulder
++     */
++    public Entity getRightShoulderEntity();
++
++    /**
++     * Moves the specified entity to this player's left shoulder.
++     *
++     * The entity will always be displayed as a parrot.
++     *
++     * @param entity The entity, or null to dismount the entity
++     */
++    public void setLeftShoulderEntity(Entity entity);
++
++    /**
++     * Moves the specified entity to this player's right shoulder.
++     *
++     * The entity will always be displayed as a parrot.
++     *
++     * @param entity The entity, or null to dismount the entity
++     */
++    public void setRightShoulderEntity(Entity entity);
++
++    /**
++     * Gets if this player has left the End through the portal and has thus seen the credits.
++     *
++     * @return If the player has seen the End credits
++     */
++    public boolean hasSeenCredits();
++
++    /**
++     * Gets a copy of the list of recipes that this player has seen.
++     *
++     * @return The list of recipes
++     */
++    public Collection<Recipe> getUnlockedRecipes();
++
++    /**
+      * Sends a title and a subtitle message to the player. If either of these
+      * values are null, they will not be sent and the display will remain
+      * unchanged. If they are empty strings, the display will be updated as
+diff --git a/src/main/java/org/bukkit/event/player/PlayerAchievementAwardedEvent.java b/src/main/java/org/bukkit/event/player/PlayerAchievementAwardedEvent.java
+index e33fade8..8e83e11d 100644
+--- a/src/main/java/org/bukkit/event/player/PlayerAchievementAwardedEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerAchievementAwardedEvent.java
+@@ -7,12 +7,16 @@ import org.bukkit.event.HandlerList;
+ 
+ /**
+  * Called when a player earns an achievement.
++ *
++ * @deprecated @see Achievement
+  */
++@Deprecated
+ public class PlayerAchievementAwardedEvent extends PlayerEvent implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     private final Achievement achievement;
+     private boolean isCancelled = false;
+ 
++    @Deprecated
+     public PlayerAchievementAwardedEvent(Player player, Achievement achievement) {
+         super(player);
+         this.achievement = achievement;
+@@ -22,7 +26,9 @@ public class PlayerAchievementAwardedEvent extends PlayerEvent implements Cancel
+      * Gets the Achievement being awarded.
+      *
+      * @return the achievement being awarded
++     * @deprecated @see Achievement
+      */
++    @Deprecated
+     public Achievement getAchievement() {
+         return achievement;
+     }
+diff --git a/src/main/java/org/bukkit/event/player/PlayerLearnRecipeEvent.java b/src/main/java/org/bukkit/event/player/PlayerLearnRecipeEvent.java
+new file mode 100644
+index 00000000..d445f5b0
+--- /dev/null
++++ b/src/main/java/org/bukkit/event/player/PlayerLearnRecipeEvent.java
+@@ -0,0 +1,41 @@
++package org.bukkit.event.player;
++
++import org.bukkit.entity.Player;
++import org.bukkit.event.Cancellable;
++import org.bukkit.event.HandlerList;
++import org.bukkit.inventory.Recipe;
++
++public class PlayerLearnRecipeEvent extends PlayerEvent implements Cancellable {
++    private static final HandlerList handlers = new HandlerList();
++    private Recipe recipe;
++
++    private boolean cancel;
++
++    public PlayerLearnRecipeEvent(Player who, Recipe recipe) {
++        super(who);
++        this.recipe = recipe;
++    }
++
++    @Override
++    public HandlerList getHandlers() {
++        return null;
++    }
++
++    @Override
++    public boolean isCancelled() {
++        return cancel;
++    }
++
++    @Override
++    public void setCancelled(boolean cancel) {
++        this.cancel = cancel;
++    }
++
++    public Recipe getRecipe() {
++        return recipe;
++    }
++
++    public void setRecipe(Recipe recipe) {
++        this.recipe = recipe;
++    }
++}
+diff --git a/src/main/java/org/bukkit/inventory/meta/RecipeStorageMeta.java b/src/main/java/org/bukkit/inventory/meta/RecipeStorageMeta.java
+new file mode 100644
+index 00000000..3a1892d8
+--- /dev/null
++++ b/src/main/java/org/bukkit/inventory/meta/RecipeStorageMeta.java
+@@ -0,0 +1,25 @@
++package org.bukkit.inventory.meta;
++
++import org.bukkit.Material;
++import org.bukkit.inventory.Recipe;
++
++import java.util.Collection;
++
++/**
++ * RecipeMeta is for items that can store recipes.
++ * {@link Material#KNOWLEDGE_BOOK} is an example of an item with recipe storage.
++ */
++public interface RecipeStorageMeta extends ItemMeta {
++
++    boolean hasStoredRecipes();
++
++    boolean hasStoredRecipe(Recipe recipe);
++
++    Collection<Recipe> getStoredRecipes();
++
++    boolean addStoredRecipe(Recipe recipe);
++
++    boolean removedStoredRecipe(Recipe recipe);
++
++    RecipeStorageMeta clone();
++}
+-- 
+2.12.2
+
