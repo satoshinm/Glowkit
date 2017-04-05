@@ -1,4 +1,4 @@
-From ea7a372c8e4d10763cc76c510c64b72e71485727 Mon Sep 17 00:00:00 2001
+From 8c2a437a56b1738c8e23af3a9fa8492528cfabc7 Mon Sep 17 00:00:00 2001
 From: momothereal <momothereal.mc@gmail.com>
 Date: Fri, 31 Mar 2017 07:49:36 -0400
 Subject: [PATCH] Update to 1.12 snapshot
@@ -382,7 +382,7 @@ index a7686d52..f3930c1b 100644
      // These don't have an entity ID in nms.EntityTypes.
 diff --git a/src/main/java/org/bukkit/entity/Parrot.java b/src/main/java/org/bukkit/entity/Parrot.java
 new file mode 100644
-index 00000000..2b9cde14
+index 00000000..c52df606
 --- /dev/null
 +++ b/src/main/java/org/bukkit/entity/Parrot.java
 @@ -0,0 +1,30 @@
@@ -414,7 +414,7 @@ index 00000000..2b9cde14
 +
 +    public Player getSittingOn();
 +
-+    public Player setSittingOn(Player player, Shoulder shoulder);
++    public void setSittingOn(Player player, Shoulder shoulder);
 +}
 diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
 index f7c68c34..94da674d 100644
