@@ -1,4 +1,4 @@
-From 8c2a437a56b1738c8e23af3a9fa8492528cfabc7 Mon Sep 17 00:00:00 2001
+From 7922e033a33f8d284e84e8759f7c588be852b1e9 Mon Sep 17 00:00:00 2001
 From: momothereal <momothereal.mc@gmail.com>
 Date: Fri, 31 Mar 2017 07:49:36 -0400
 Subject: [PATCH] Update to 1.12 snapshot
@@ -47,21 +47,10 @@ index d962a0ce..651aeea7 100644
  
      /**
 diff --git a/src/main/java/org/bukkit/Achievement.java b/src/main/java/org/bukkit/Achievement.java
-index ee874ee6..4e0da12f 100644
+index 2a3d7667..fa8d9d2d 100644
 --- a/src/main/java/org/bukkit/Achievement.java
 +++ b/src/main/java/org/bukkit/Achievement.java
-@@ -2,7 +2,10 @@ package org.bukkit;
- 
- /**
-  * Represents an achievement, which may be given to players.
-+ *
-+ * @deprecated Achievements do not exist anymore, use {@link org.bukkit.advancement.Advancement}s.
-  */
-+@Deprecated
- public enum Achievement {
-     OPEN_INVENTORY,
-     MINE_WOOD (OPEN_INVENTORY),
-@@ -54,7 +57,9 @@ public enum Achievement {
+@@ -56,7 +56,9 @@ public enum Achievement {
       * Returns whether or not this achievement has a parent achievement.
       * 
       * @return whether the achievement has a parent achievement
@@ -71,7 +60,7 @@ index ee874ee6..4e0da12f 100644
      public boolean hasParent() {
          return parent != null;
      }
-@@ -63,7 +68,9 @@ public enum Achievement {
+@@ -65,7 +67,9 @@ public enum Achievement {
       * Returns the parent achievement of this achievement, or null if none.
       * 
       * @return the parent achievement or null
@@ -417,7 +406,7 @@ index 00000000..c52df606
 +    public void setSittingOn(Player player, Shoulder shoulder);
 +}
 diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
-index f7c68c34..94da674d 100644
+index ed540365..96199cd6 100644
 --- a/src/main/java/org/bukkit/entity/Player.java
 +++ b/src/main/java/org/bukkit/entity/Player.java
 @@ -1,29 +1,19 @@
@@ -456,7 +445,7 @@ index f7c68c34..94da674d 100644
  /**
   * Represents a player, connected or not
   */
-@@ -583,12 +573,41 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+@@ -583,6 +573,33 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
      public void updateInventory();
  
      /**
@@ -490,35 +479,7 @@ index f7c68c34..94da674d 100644
       * Awards the given achievement and any parent achievements that the
       * player does not have.
       *
-      * @param achievement Achievement to award
-      * @throws IllegalArgumentException if achievement is null
-+     * @deprecated @see Achievement
-      */
-+    @Deprecated
-     public void awardAchievement(Achievement achievement);
- 
-     /**
-@@ -597,7 +616,9 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
-      *
-      * @param achievement Achievement to remove
-      * @throws IllegalArgumentException if achievement is null
-+     * @deprecated @see Achievement
-      */
-+    @Deprecated
-     public void removeAchievement(Achievement achievement);
- 
-     /**
-@@ -606,7 +627,9 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
-      * @param achievement the achievement to check
-      * @return whether the player has the achievement
-      * @throws IllegalArgumentException if achievement is null
-+     * @deprecated @see Achievement
-      */
-+    @Deprecated
-     public boolean hasAchievement(Achievement achievement);
- 
-     /**
-@@ -1337,6 +1360,39 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+@@ -1343,6 +1360,39 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
      public void setSpectatorTarget(Entity entity);
  
      /**
@@ -558,37 +519,6 @@ index f7c68c34..94da674d 100644
       * Sends a title and a subtitle message to the player. If either of these
       * values are null, they will not be sent and the display will remain
       * unchanged. If they are empty strings, the display will be updated as
-diff --git a/src/main/java/org/bukkit/event/player/PlayerAchievementAwardedEvent.java b/src/main/java/org/bukkit/event/player/PlayerAchievementAwardedEvent.java
-index e33fade8..8e83e11d 100644
---- a/src/main/java/org/bukkit/event/player/PlayerAchievementAwardedEvent.java
-+++ b/src/main/java/org/bukkit/event/player/PlayerAchievementAwardedEvent.java
-@@ -7,12 +7,16 @@ import org.bukkit.event.HandlerList;
- 
- /**
-  * Called when a player earns an achievement.
-+ *
-+ * @deprecated @see Achievement
-  */
-+@Deprecated
- public class PlayerAchievementAwardedEvent extends PlayerEvent implements Cancellable {
-     private static final HandlerList handlers = new HandlerList();
-     private final Achievement achievement;
-     private boolean isCancelled = false;
- 
-+    @Deprecated
-     public PlayerAchievementAwardedEvent(Player player, Achievement achievement) {
-         super(player);
-         this.achievement = achievement;
-@@ -22,7 +26,9 @@ public class PlayerAchievementAwardedEvent extends PlayerEvent implements Cancel
-      * Gets the Achievement being awarded.
-      *
-      * @return the achievement being awarded
-+     * @deprecated @see Achievement
-      */
-+    @Deprecated
-     public Achievement getAchievement() {
-         return achievement;
-     }
 diff --git a/src/main/java/org/bukkit/event/player/PlayerLearnRecipeEvent.java b/src/main/java/org/bukkit/event/player/PlayerLearnRecipeEvent.java
 new file mode 100644
 index 00000000..d445f5b0
