@@ -1,11 +1,11 @@
-From 7922e033a33f8d284e84e8759f7c588be852b1e9 Mon Sep 17 00:00:00 2001
+From c6b9261fbfa73f7dd62490a67df5c8ee89ba7d54 Mon Sep 17 00:00:00 2001
 From: momothereal <momothereal.mc@gmail.com>
 Date: Fri, 31 Mar 2017 07:49:36 -0400
 Subject: [PATCH] Update to 1.12 snapshot
 
 
 diff --git a/pom.xml b/pom.xml
-index 12963c0d..87690326 100644
+index 12963c0d..975a8ef3 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -12,7 +12,7 @@
@@ -13,7 +13,7 @@ index 12963c0d..87690326 100644
      <groupId>net.glowstone</groupId>
      <artifactId>glowkit</artifactId>
 -    <version>1.11.2-R0.1-SNAPSHOT</version>
-+    <version>1.12-17w14a-R0.1-SNAPSHOT</version>
++    <version>1.12-17w15a-R0.1-SNAPSHOT</version>
      <packaging>jar</packaging>
  
      <name>Glowkit</name>
