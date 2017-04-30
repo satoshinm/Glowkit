@@ -1,0 +1,232 @@
+From c6a008f17ae101ce262c2e05e1d594205a94e9f6 Mon Sep 17 00:00:00 2001
+From: "Satoshi N. M" <snmatsutake@yahoo.co.jp>
+Date: Sun, 30 Apr 2017 11:20:19 -0700
+Subject: [PATCH] Remove avaje ebean, Spigot is planning to and only one plugin
+ used it
+
+avaje.* takes up 3.9 MB in the compiled jar, and is an older version
+because it is API, but it hasn't caught on, Spigot is planning to remove
+it soon and according to their research only one plugin used it:
+
+https://www.spigotmc.org/threads/removal-of-ebean-orm.194144/
+
+diff --git a/pom.xml b/pom.xml
+index 12963c0d..489304d3 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -100,11 +100,6 @@
+             <version>2.2.4</version>
+         </dependency>
+         <dependency>
+-            <groupId>org.avaje</groupId>
+-            <artifactId>ebean</artifactId>
+-            <version>2.8.1</version>
+-        </dependency>
+-        <dependency>
+             <groupId>org.yaml</groupId>
+             <artifactId>snakeyaml</artifactId>
+             <version>1.17</version>
+diff --git a/src/main/java/org/bukkit/Bukkit.java b/src/main/java/org/bukkit/Bukkit.java
+index 1f663fa1..ccd13d97 100644
+--- a/src/main/java/org/bukkit/Bukkit.java
++++ b/src/main/java/org/bukkit/Bukkit.java
+@@ -37,7 +37,6 @@ import org.bukkit.scheduler.BukkitScheduler;
+ import org.bukkit.scoreboard.ScoreboardManager;
+ import org.bukkit.util.CachedServerIcon;
+ 
+-import com.avaje.ebean.config.ServerConfig;
+ import com.google.common.collect.ImmutableList;
+ import org.bukkit.generator.ChunkGenerator;
+ 
+@@ -598,16 +597,6 @@ public final class Bukkit {
+     }
+ 
+     /**
+-     * Populates a given {@link ServerConfig} with values attributes to this
+-     * server.
+-     *
+-     * @param config the server config to populate
+-     */
+-    public static void configureDbConfig(ServerConfig config) {
+-        server.configureDbConfig(config);
+-    }
+-
+-    /**
+      * Adds a recipe to the crafting manager.
+      *
+      * @param recipe the recipe to add
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+index 0a31366b..f4e9ba6b 100644
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -1,6 +1,5 @@
+ package org.bukkit;
+ 
+-import com.avaje.ebean.config.ServerConfig;
+ import com.google.common.collect.ImmutableList;
+ import org.bukkit.Warning.WarningState;
+ import org.bukkit.boss.BarColor;
+@@ -481,14 +480,6 @@ public interface Server extends PluginMessageRecipient {
+     public boolean dispatchCommand(CommandSender sender, String commandLine) throws CommandException;
+ 
+     /**
+-     * Populates a given {@link ServerConfig} with values attributes to this
+-     * server.
+-     *
+-     * @param config the server config to populate
+-     */
+-    public void configureDbConfig(ServerConfig config);
+-
+-    /**
+      * Adds a recipe to the crafting manager.
+      *
+      * @param recipe the recipe to add
+diff --git a/src/main/java/org/bukkit/plugin/Plugin.java b/src/main/java/org/bukkit/plugin/Plugin.java
+index 4357b131..c4e22c62 100644
+--- a/src/main/java/org/bukkit/plugin/Plugin.java
++++ b/src/main/java/org/bukkit/plugin/Plugin.java
+@@ -9,8 +9,6 @@ import org.bukkit.command.TabExecutor;
+ import org.bukkit.configuration.file.FileConfiguration;
+ import org.bukkit.generator.ChunkGenerator;
+ 
+-import com.avaje.ebean.EbeanServer;
+-
+ /**
+  * Represents a Plugin
+  * <p>
+@@ -140,27 +138,6 @@ public interface Plugin extends TabExecutor {
+     public void setNaggable(boolean canNag);
+ 
+     /**
+-     * Gets the {@link EbeanServer} tied to this plugin. This will only be
+-     * available if enabled in the {@link
+-     * PluginDescriptionFile#isDatabaseEnabled()}
+-     * <p>
+-     * <i>For more information on the use of <a href="http://www.avaje.org/">
+-     * Avaje Ebeans ORM</a>, see <a
+-     * href="http://www.avaje.org/ebean/documentation.html">Avaje Ebeans
+-     * Documentation</a></i>
+-     * <p>
+-     * <i>For an example using Ebeans ORM, see <a
+-     * href="https://github.com/Bukkit/HomeBukkit">Bukkit's Homebukkit Plugin
+-     * </a></i>
+-     *
+-     * @return ebean server instance or null if not enabled
+-     * @deprecated all EBean related methods will be removed with Minecraft 1.12
+-     * - see https://www.spigotmc.org/threads/194144/
+-     */
+-    @Deprecated
+-    public EbeanServer getDatabase();
+-
+-    /**
+      * Gets a {@link ChunkGenerator} for use in a default world, as specified
+      * in the server configuration
+      *
+diff --git a/src/main/java/org/bukkit/plugin/java/JavaPlugin.java b/src/main/java/org/bukkit/plugin/java/JavaPlugin.java
+index bcb8a679..4baa0077 100644
+--- a/src/main/java/org/bukkit/plugin/java/JavaPlugin.java
++++ b/src/main/java/org/bukkit/plugin/java/JavaPlugin.java
+@@ -32,12 +32,6 @@ import org.bukkit.plugin.PluginDescriptionFile;
+ import org.bukkit.plugin.PluginLoader;
+ import org.bukkit.plugin.PluginLogger;
+ 
+-import com.avaje.ebean.EbeanServer;
+-import com.avaje.ebean.EbeanServerFactory;
+-import com.avaje.ebean.config.DataSourceConfig;
+-import com.avaje.ebean.config.ServerConfig;
+-import com.avaje.ebeaninternal.api.SpiEbeanServer;
+-import com.avaje.ebeaninternal.server.ddl.DdlGenerator;
+ import com.google.common.base.Charsets;
+ import com.google.common.base.Preconditions;
+ import com.google.common.io.ByteStreams;
+@@ -54,7 +48,6 @@ public abstract class JavaPlugin extends PluginBase {
+     private File dataFolder = null;
+     private ClassLoader classLoader = null;
+     private boolean naggable = true;
+-    private EbeanServer ebean = null;
+     private FileConfiguration newConfig = null;
+     private File configFile = null;
+     private PluginLogger logger = null;
+@@ -285,27 +278,6 @@ public abstract class JavaPlugin extends PluginBase {
+         this.classLoader = classLoader;
+         this.configFile = new File(dataFolder, "config.yml");
+         this.logger = new PluginLogger(this);
+-
+-        if (description.isDatabaseEnabled()) {
+-            ServerConfig db = new ServerConfig();
+-
+-            db.setDefaultServer(false);
+-            db.setRegister(false);
+-            db.setClasses(getDatabaseClasses());
+-            db.setName(description.getName());
+-            server.configureDbConfig(db);
+-
+-            DataSourceConfig ds = db.getDataSourceConfig();
+-
+-            ds.setUrl(replaceDatabaseString(ds.getUrl()));
+-            dataFolder.mkdirs();
+-
+-            ClassLoader previous = Thread.currentThread().getContextClassLoader();
+-
+-            Thread.currentThread().setContextClassLoader(classLoader);
+-            ebean = EbeanServerFactory.create(db);
+-            Thread.currentThread().setContextClassLoader(previous);
+-        }
+     }
+ 
+     /**
+@@ -387,27 +359,6 @@ public abstract class JavaPlugin extends PluginBase {
+     }
+ 
+     @Override
+-    public EbeanServer getDatabase() {
+-        Preconditions.checkState(description.isDatabaseEnabled(), "Plugin does not have database: true in plugin.yml");
+-
+-        return ebean;
+-    }
+-
+-    protected void installDDL() {
+-        SpiEbeanServer serv = (SpiEbeanServer) getDatabase();
+-        DdlGenerator gen = serv.getDdlGenerator();
+-
+-        gen.runScript(false, gen.generateCreateDdl());
+-    }
+-
+-    protected void removeDDL() {
+-        SpiEbeanServer serv = (SpiEbeanServer) getDatabase();
+-        DdlGenerator gen = serv.getDdlGenerator();
+-
+-        gen.runScript(true, gen.generateDropDdl());
+-    }
+-
+-    @Override
+     public final Logger getLogger() {
+         return logger;
+     }
+diff --git a/src/test/java/org/bukkit/plugin/TestPlugin.java b/src/test/java/org/bukkit/plugin/TestPlugin.java
+index 7e098925..f85e5f17 100644
+--- a/src/test/java/org/bukkit/plugin/TestPlugin.java
++++ b/src/test/java/org/bukkit/plugin/TestPlugin.java
+@@ -10,8 +10,6 @@ import org.bukkit.command.CommandSender;
+ import org.bukkit.configuration.file.FileConfiguration;
+ import org.bukkit.generator.ChunkGenerator;
+ 
+-import com.avaje.ebean.EbeanServer;
+-
+ public class TestPlugin extends PluginBase {
+     private boolean enabled = true;
+ 
+@@ -93,10 +91,6 @@ public class TestPlugin extends PluginBase {
+         throw new UnsupportedOperationException("Not supported.");
+     }
+ 
+-    public EbeanServer getDatabase() {
+-        throw new UnsupportedOperationException("Not supported.");
+-    }
+-
+     public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
+         throw new UnsupportedOperationException("Not supported.");
+     }
+-- 
+2.11.0 (Apple Git-81)
+
